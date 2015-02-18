@@ -91,7 +91,7 @@ class find_module
 		}
 
 		$pagination	= $phpbb_container->get('pagination');
-		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '';
+		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '&amp;f_opt='. $filter_key .'';
 
 		if ($delmarked)
 		{
