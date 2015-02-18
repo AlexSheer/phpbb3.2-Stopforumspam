@@ -1,0 +1,8 @@
+services:
+    sheer.stopforumspam.listener:
+        class: sheer\stopforumspam\event\listener
+        arguments:
+            - @template
+            - %core.root_path%
+        tags:
+            - { name: event.listener }
