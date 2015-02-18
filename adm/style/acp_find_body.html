@@ -1,0 +1,110 @@
+<!-- INCLUDE overall_header.html -->
+<a name="maincontent"></a>
+
+<h1>{L_ACP_FIND_SPAMER}</h1>
+<p>{L_ACP_FIND_SPAMER_EXPLAIN}</p>
+
+<form name="acp" method="post" action="{S_ACTION}">
+	<!-- IF .row -->
+	<!-- IF .pagination -->
+	<div class="pagination">
+		{EXEC_TIME} &raquo; {TOTAL_USERS}
+		<!-- IF .pagination -->
+			<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+	<!-- ENDIF -->
+	<table class="table1 zebra-table fixed-width-table responsive">
+	<thead>
+		<tr>
+			<th width="18%">{L_USER_NAME}</th>
+			<th width="25%">{L_USER_EMAIL}</th>
+			<th width="20%">{L_JOINED}</th>
+			<th width="14%">{L_POSTS}</th>
+			<th width="15%">IP</th>
+			<th width="5%">IP</th>
+			<th width="8%">e-mail</th>
+			<th width="5%">{L_NAME}</th>
+			<th width="10%">{L_RESUME}</th>
+			<th width="10%">{L_MARK}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- BEGIN row -->
+		<tr>
+			<td>{row.USER_NAME}</td>
+			<td>{row.USER_EMAIL}</td>
+			<td>{row.USER_REG_DATE}</td>
+			<td>{row.USER_POSTS}</td>
+			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><span class="{row.IP_IMG}"><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_NICK --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IS_FIND --><a class="{row.CLASS}" href="{row.U_FULL_CHECK}" onClick="popup(this.href, 650, 500, ''); return false;"><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IS_FIND --><input name="id_list[]" type="checkbox" class="radio" value="{row.USER_ID}" /><!-- ENDIF --></td>
+		</tr>
+		<!-- END row -->
+	</tbody>
+	</table>
+
+	<!-- IF .pagination -->
+	<div class="pagination">
+		{TOTAL_USERS}
+		<!-- IF .pagination -->
+			<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+	<!-- ENDIF -->
+
+	<fieldset class="quick">
+		<div class="errorbox" style="padding-top:8px">{L_WARNING_MESSAGE}</div>
+		<input class="button2" name="delmarked" value="{L_DELETE_SELECTED}" type="submit"><br>
+		<p class="small"><a href="#" onClick="marklist('acp', '', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onClick="marklist('acp', '', false); return false;">{L_UNMARK_ALL}</a></p>
+	</fieldset>
+	<!-- ELSE -->
+	<p>{L_NOT_FIND}</p>
+	<!-- ENDIF -->
+	<fieldset style="margin: 0px;" class="display-options">
+		{L_SEARCH_OPTION}:&nbsp;<select name="f" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['acp'].submit() }">
+		<!-- BEGIN jumpbox_options -->
+		<option value="{jumpbox_options.OPTION_ID}"{jumpbox_options.SELECTED}>{jumpbox_options.OPTION}</option>
+		<!-- END jumpbox_options -->
+		</select>&nbsp;&nbsp;{L_FILTER}&nbsp;
+		<select name="f_opt">{FILTER_OPTIONS}</select>
+		&nbsp;<input name="filter" type="text" value="{FILTER}" size="20" maxlength="20">
+		&nbsp;{L_SELECT_SORT}:&nbsp;
+		<select name="sk">{S_MODE_SELECT}</select><br />
+		<div style="margin: 10px 10px 10px 10px; font-size: 0.95em;">
+			{L_ORDER}&nbsp;<select name="sd">{S_ORDER_SELECT}</select>
+			&nbsp;{L_NO_POSTS_ONLY}&nbsp;&nbsp;<input name="no_posts" type="checkbox" class="radio"<!-- IF NOPOSTS -->checked<!-- ENDIF -->/>
+			&nbsp;&nbsp;<input class="button2" name="search" type="submit" value="{L_SEARCH}" />
+			<p style="font-size: 1em; padding-top: 5px;">{L_EXPLAIN}</p>
+		</div>
+	</fieldset>
+	<!-- IF .row  -->
+	<fieldset <fieldset style="margin: 0px;">
+		<legend>{L_LEGEND}</legend>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton ip"></span></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_EM_NOT_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton em_spam"></span></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_EM_IS_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton find"></span></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton spam"></span></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_IS_FIND}</dd>
+		</dl>
+	</fieldset>
+	<!-- ENDIF -->
+</form>
+<!-- INCLUDE overall_footer.html -->
