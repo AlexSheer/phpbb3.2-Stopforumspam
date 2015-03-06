@@ -1,10 +1,11 @@
 <?php
 /**
 *
-* info_acp_navlinks [English]
+* info_acp_find [English]
 *
-* @package phpBB Extension - Nav Links In Header
+* @package phpBB Extension - StopForumSpam
 * @copyright (c) 2015 Sheer
+* @author bonelifer
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
