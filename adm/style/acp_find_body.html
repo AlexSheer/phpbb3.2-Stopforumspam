@@ -1,4 +1,36 @@
 <!-- INCLUDE overall_header.html -->
+
+<style>
+.buton
+{
+	background: url("./../styles/prosilver/theme/images/icons_button.png");
+}
+
+.icon
+{
+	box-shadow: 0px 0px 0px 1px #FFF inset;
+	white-space: nowrap;
+	border-radius: 4px;
+	height: 9px;
+	width: 9px;
+	padding: 5px;
+	display: inline-block;
+	border: 1px solid #C7C3BF;
+	background-color: #FFFFFF;
+}
+
+.stop
+{
+	list-style: outside none none;
+	margin: 0px 0px 0px -3px;
+}
+
+.spam		{ background-position: -149px -17px; }
+.em_spam	{ background-position: -161px -17px; }
+.find		{ background-position: -149px 4px; }
+.ip			{ background-position: -172px 4px; }
+</style>
+
 <a name="maincontent"></a>
 
 <h1>{L_ACP_FIND_SPAMER}</h1>
@@ -37,7 +69,7 @@
 			<td>{row.USER_NAME}</td>
 			<td>{row.USER_EMAIL}</td>
 			<td>{row.USER_REG_DATE}</td>
-			<td>{row.USER_POSTS}</td>
+			<td><a href="{row.U_POSTS}">{row.USER_POSTS}</a></td>
 			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><span class="{row.IP_IMG}"><!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
