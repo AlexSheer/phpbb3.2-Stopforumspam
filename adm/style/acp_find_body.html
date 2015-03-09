@@ -69,7 +69,7 @@
 			<td>{row.USER_NAME}</td>
 			<td>{row.USER_EMAIL}</td>
 			<td>{row.USER_REG_DATE}</td>
-			<td><a href="{row.U_POSTS}">{row.USER_POSTS}</a></td>
+			<td><!-- IF row.USER_POSTS --><a href="{row.U_POSTS}">{row.USER_POSTS}</a><!-- ELSE -->{row.USER_POSTS}<!-- ENDIF --></td>
 			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><span class="{row.IP_IMG}"><!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
