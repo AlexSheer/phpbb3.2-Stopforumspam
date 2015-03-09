@@ -1,9 +1,9 @@
 <?php
 /**
 *
-* info_acp_navlinks [Russian]
+* info_acp_find [Russian]
 *
-* @package phpBB Extension - Nav Links In Header
+* @package phpBB Extension - StopForumSpam
 * @copyright (c) 2015 Sheer
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
