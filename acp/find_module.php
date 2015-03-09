@@ -229,6 +229,10 @@ class find_module
 					}
 				}
 
+				if (!isset($banned_ip))
+				{
+					$banned_ip = false;
+				}
 				if ($em || $nick)
 				{
 					$class = 'icon buton em_spam';
