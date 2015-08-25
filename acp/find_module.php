@@ -642,7 +642,7 @@ class mysql_extractor extends base_extractor
 		$field = array();
 		for ($i = 0; $i < $fields_cnt; $i++)
 		{
-			$field[] = ($sql_layer == 'mysqli') ? mysqli_fetch_field($result, $i) : mysql_fetch_field($result, $i);
+			$field[] = ($sql_layer == 'mysqli') ? mysqli_fetch_field($result) : mysql_fetch_field($result, $i);
 		}
 		if($sql_layer == 'mysqli')
 		{
