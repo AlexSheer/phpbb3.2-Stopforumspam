@@ -91,4 +91,5 @@ $lang = array_merge($lang, array(
 	'USER_NAME'		=> 'Username',
 	'USER_EMAIL'	=> 'Email Address',
 	'WARNING_MESSAGE'	=> '<h3>Be careful this action is irreversible!</h3><p>However, the operation will be backed up on a table <b>users</b> for each individual user. Copies are recorded in the folder <c>"store"</c></p>',
+	'CONNECTION_ERROR'	=> 'Failed to retrieve data from <a href = "http://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
 ));
