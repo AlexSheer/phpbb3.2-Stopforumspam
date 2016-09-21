@@ -60,8 +60,8 @@ class find_module
 
 		// Sorting and order
 		$order_by = '';
-		$sort_key_text = array('a' => $user->lang['SORT_JOINED'], 'b' => $user->lang['SORT_USERNAME'], 'c' => $user->lang['SORT_IP'], 'd' => $user->lang['SORT_POST'], 'e' => $user->lang['SORT_EMAIL']);
-		$sort_key_sql = array('a' => 'user_regdate', 'b' => 'username_clean', 'c' => 'user_ip',  'd' => 'user_posts', 'e' => 'user_email');
+		$sort_key_text = array('a' => $user->lang['SORT_JOINED'], 'b' => $user->lang['SORT_USERNAME'], 'c' => $user->lang['SORT_IP'], 'd' => $user->lang['SORT_POST'], 'e' => $user->lang['SORT_EMAIL'], 'l' => $user->lang['LAST_VISIT']);
+		$sort_key_sql = array('a' => 'user_regdate', 'b' => 'username_clean', 'c' => 'user_ip',  'd' => 'user_posts', 'e' => 'user_email', 'l' => 'user_lastvisit');
 		$sort_dir_text = array('a' => $user->lang['ASCENDING'], 'd' => $user->lang['DESCENDING']);
 
 		if (!isset($sort_key_sql[$sort_key]))
@@ -99,7 +99,7 @@ class find_module
 			{
 				if(sizeof($users))
 				{
-					$sql = 'SELECT user_id, user_email, username, username_clean, user_ip
+					$sql = 'SELECT user_id, user_email, username, username_clean, user_ip, user_lastvisit
 						FROM ' . USERS_TABLE . '
 						WHERE ' . $db->sql_in_set('user_id', $users) . '';
 					$result = $db->sql_query_limit($sql, $per_page, $start);
@@ -184,15 +184,15 @@ class find_module
 			$time_start = $this->getmicrotime();
 			$sql = 'SELECT count(user_id) AS total
 				FROM '. USERS_TABLE .'
-				WHERE user_type != 2 AND user_type != 3 AND user_regdate > ' . $period . ' '
+				WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . ' AND user_regdate > ' . $period . ' '
 				. $sql_where;
 			$result = $db->sql_query($sql);
 			$total_users =  $db->sql_fetchfield('total');
 			$db->sql_freeresult($result);
 
-			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts
+			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts, user_lastvisit
 					FROM '. USERS_TABLE .'
-					WHERE user_type != 2 AND user_type != 3
+					WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . '
 					AND user_regdate > ' . $period . '
 					' . $sql_where . ''. $order_by;
 			$result = $db->sql_query_limit($sql, $per_page, $start);
@@ -208,6 +208,10 @@ class find_module
 					$row['user_email']
 				);
 				$i_data = $this->check_stopforumspam($ch_data);
+				if (!is_array($i_data))
+				{
+					trigger_error($i_data, E_USER_WARNING);
+				}
 				$insp_data = $i_data[0];
 
 				if (sizeof($insp_data))
@@ -260,6 +264,7 @@ class find_module
 					'S_IP_FIND'		=> ($banned_ip || empty($ip)) ? true : false,
 
 					'USER_REG_DATE'	=> $user->format_date($row['user_regdate']),
+					'LAST_VISIT'	=> ($row['user_lastvisit']) ? $user->format_date($row['user_lastvisit']) : $user->lang['NEVER'],
 					'USER_NAME'		=> "<a href=". append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) .">$uname</a>",
 					'USER_EMAIL'	=> $row['user_email'],
 					'USER_POSTS'	=> $row['user_posts'],
@@ -315,7 +320,7 @@ class find_module
 		$xmlUrl .= (!empty($chk_data[1])) ? 'ip=' . $chk_data[1] . '&' : '';
 		$xmlUrl .= (!empty($chk_data[2])) ? 'email=' . $chk_data[2] . '' : '';
 
-		$xmlStr = (function_exists('file_get_contents')) ? file_get_contents($xmlUrl) : $this->file_get_contents_curl($xmlUrl);
+		$xmlStr = (function_exists('file_get_contents')) ? @file_get_contents($xmlUrl) : $this->file_get_contents_curl($xmlUrl);
 
 		if ($xmlStr)
 		{
@@ -339,7 +344,7 @@ class find_module
 		}
 		else
 		{
-			trigger_error('Common Error');
+			return ('CONNECTION_ERROR');
 		}
 	}
 
