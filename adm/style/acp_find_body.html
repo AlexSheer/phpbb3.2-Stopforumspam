@@ -37,10 +37,10 @@
 <p>{L_ACP_FIND_SPAMER_EXPLAIN}</p>
 
 <form name="acp" method="post" action="{S_ACTION}">
-	<!-- IF .row -->
+	<!-- IF .row --><span style="font-size: 80%;">{EXEC_TIME}</span>
 	<!-- IF .pagination -->
 	<div class="pagination">
-		{EXEC_TIME} &raquo; {TOTAL_USERS}
+		{TOTAL_USERS}
 		<!-- IF .pagination -->
 			<!-- INCLUDE pagination.html -->
 		<!-- ELSE -->
@@ -54,13 +54,14 @@
 			<th width="18%">{L_USER_NAME}</th>
 			<th width="25%">{L_USER_EMAIL}</th>
 			<th width="20%">{L_JOINED}</th>
+			<th width="22%">{L_LAST_VISIT}</th>
 			<th width="14%">{L_POSTS}</th>
-			<th width="15%">IP</th>
-			<th width="5%">IP</th>
-			<th width="8%">e-mail</th>
+			<th width="8%">IP</th>
+			<th width="3%">IP</th>
+			<th width="6%">e-mail</th>
 			<th width="5%">{L_NAME}</th>
-			<th width="10%">{L_RESUME}</th>
-			<th width="10%">{L_MARK}</th>
+			<th width="8%">{L_RESUME}</th>
+			<th width="9%">{L_MARK}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -69,6 +70,7 @@
 			<td>{row.USER_NAME}</td>
 			<td>{row.USER_EMAIL}</td>
 			<td>{row.USER_REG_DATE}</td>
+			<td>{row.LAST_VISIT}</td>
 			<td><!-- IF row.USER_POSTS --><a href="{row.U_POSTS}">{row.USER_POSTS}</a><!-- ELSE -->{row.USER_POSTS}<!-- ENDIF --></td>
 			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><span class="{row.IP_IMG}"><!-- ENDIF --></td>
