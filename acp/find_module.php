@@ -265,7 +265,7 @@ class find_module
 
 					'USER_REG_DATE'	=> $user->format_date($row['user_regdate']),
 					'LAST_VISIT'	=> ($row['user_lastvisit']) ? $user->format_date($row['user_lastvisit']) : $user->lang['NEVER'],
-					'USER_NAME'		=> "<a href=". append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) .">$uname</a>",
+					'USER_NAME'		=> '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) . '">' . $uname .'</a>',
 					'USER_EMAIL'	=> $row['user_email'],
 					'USER_POSTS'	=> $row['user_posts'],
 					'USER_IP'		=> (!empty($row['user_ip'])) ? $row['user_ip'] : $user->lang['READ_COMMENT'],
