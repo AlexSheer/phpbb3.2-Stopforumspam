@@ -152,7 +152,6 @@ class find_module
 				case 0:
 					$option = $user->lang['PER_DAY'];
 					$period = $current_time - $day;
-					$start = 0;
 				break;
 				case 1:
 					$option = $user->lang['PER_WEEK'];
@@ -173,7 +172,6 @@ class find_module
 				default:
 					$option = $user->lang['PER_DAY'];
 					$period = $current_time - 86400;
-					$start = 0;
 				break;
 			}
 
