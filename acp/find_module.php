@@ -99,7 +99,7 @@ class find_module
 			{
 				if(sizeof($users))
 				{
-					$sql = 'SELECT user_id, user_email, username, username_clean, user_ip, user_lastvisit
+					$sql = 'SELECT user_id, user_email, username, user_ip
 						FROM ' . USERS_TABLE . '
 						WHERE ' . $db->sql_in_set('user_id', $users) . '';
 					$result = $db->sql_query_limit($sql, $per_page, $start);
@@ -108,7 +108,7 @@ class find_module
 					{
 						$this->backup($users[$i]);
 						user_ban('email', $row['user_email'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
-						user_ban('user', $row['username_clean'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
+						user_ban('user', $row['username'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
 						if($row['user_ip'])
 						{
 							user_ban('ip', $row['user_ip'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
