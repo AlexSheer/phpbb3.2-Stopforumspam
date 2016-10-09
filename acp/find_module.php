@@ -93,6 +93,10 @@ class find_module
 		$pagination	= $phpbb_container->get('pagination');
 		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '&amp;f_opt='. $filter_key .'';
 
+		$sql_where = ($filter) ? ' AND user_' . $filter_options[$filter_key] . ' ' . $db->sql_like_expression(str_replace('*',$db->get_any_char(), $filter)) . '' : '';
+		$sql_where .= ($no_post) ? ' AND user_posts = 0' : '';
+		$order_by = ' ORDER BY ' . $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC') .' ';
+
 		if ($delmarked)
 		{
 			if (confirm_box(true))
@@ -101,7 +105,7 @@ class find_module
 				{
 					$sql = 'SELECT user_id, user_email, username, user_ip
 						FROM ' . USERS_TABLE . '
-						WHERE ' . $db->sql_in_set('user_id', $users) . '';
+						WHERE ' . $db->sql_in_set('user_id', $users) . $sql_where . ''. $order_by;
 					$result = $db->sql_query_limit($sql, $per_page, $start);
 					$i = 0;
 					while ($row = $db->sql_fetchrow($result))
@@ -174,10 +178,6 @@ class find_module
 					$period = $current_time - 86400;
 				break;
 			}
-
-			$sql_where = ($filter) ? ' AND user_' . $filter_options[$filter_key] . ' ' . $db->sql_like_expression(str_replace('*',$db->get_any_char(), $filter)) . '' : '';
-			$sql_where .= ($no_post) ? ' AND user_posts = 0' : '';
-			$order_by = ' ORDER BY ' . $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC') .' ';
 
 			$time_start = $this->getmicrotime();
 			$sql = 'SELECT count(user_id) AS total
