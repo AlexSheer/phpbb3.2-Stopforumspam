@@ -36,6 +36,7 @@ class find_module
 		$action		= $request->variable('f', '');
 
 		$users = $request->variable('id_list', array(0));
+		$fail_chhk = false;
 
 		$filter_options = array(1 => 'ip', 2 => 'email');
 		$per_page = $config['topics_per_page'] = 6;
@@ -208,8 +209,12 @@ class find_module
 				$i_data = $this->check_stopforumspam($ch_data);
 				if (!is_array($i_data))
 				{
-					trigger_error($i_data, E_USER_WARNING);
+					//trigger_error($i_data, E_USER_WARNING);
+					$insp_data = array();
+					$em = $nick = false;
+					$fail_chhk = true;
 				}
+				else
 				$insp_data = $i_data[0];
 
 				if (sizeof($insp_data))
@@ -270,6 +275,7 @@ class find_module
 					'U_POSTS'		=> append_sid("{$phpbb_root_path}search.$phpEx", 'author_id=' . $row['user_id'] . '&sr=posts'),
 					'S_USER_IP'		=> (!empty($row['user_ip'])) ? $this->u_action . '&amp;whois=true&amp;ip=' . $row['user_ip'] . '' : '',
 					'U_FULL_CHECK'	=> $this->u_action. '&amp;full_check=true&ch_user=' . $row['user_id'],
+					'S_FAIL_CHK'	=> $fail_chhk,
 				));
 			}
 			$db->sql_freeresult($result);
@@ -313,7 +319,7 @@ class find_module
 			return array();
 		}
 
-		$xmlUrl = 'http://www.stopforumspam.com/api?';
+		$xmlUrl = 'http://api.stopforumspam.org/api?';
 		$xmlUrl .= (!empty($chk_data[0])) ? 'username=' . $chk_data[0] . '&' : '';
 		if(!preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $chk_data[1]))
 		{
