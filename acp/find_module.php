@@ -215,7 +215,9 @@ class find_module
 					$fail_chhk = true;
 				}
 				else
-				$insp_data = $i_data[0];
+				{
+					$insp_data = $i_data[0];
+				}
 
 				if (sizeof($insp_data))
 				{
@@ -401,15 +403,17 @@ class find_module
 		}
 		return;
 	}
+
 	function full_check($uid)
 	{
 		global $db, $template, $user, $phpbb_root_path, $phpEx;
+
 		$add = request_var('add', false);
 		$this->tpl_name = 'is_spamer_full';
 
 		if (file_exists('' . $phpbb_root_path. 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . ''))
 		{
-			$file = @fopen('' . $phpbb_root_path. 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . '', "r");
+			$file = @fopen('' . $phpbb_root_path . 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . '', "r");
 			fseek($file, 2);
 			$apy_key = fgets($file,15);
 		}
@@ -423,8 +427,8 @@ class find_module
 		$report = $user->lang['RESUME'];
 
 		$sql = 'SELECT user_id, user_ip, user_email, username
-			FROM '. USERS_TABLE .'
-			WHERE user_id = '.intval($uid).'';
+			FROM ' . USERS_TABLE . '
+			WHERE user_id = ' . intval($uid);
 
 		$result = $db->sql_query_limit($sql, 1);
 		$row = $db->sql_fetchrow($result);
@@ -433,7 +437,7 @@ class find_module
 		$ip = $row['user_ip'];
 		if ($add)
 		{
-			$this->PostToHost('username='.$row['username'].'&ip_addr='.$row['user_ip'].'&email='.$row['user_email'].'&api_key='.$apy_key.'');
+			$this->PostToHost('username=' . $row['username'] . '&ip_addr=' . $row['user_ip'] . '&email=' . $row['user_email'] . '&api_key=' . $apy_key . '');
 			redirect ($this->u_action. '&amp;f=d');
 		}
 
@@ -520,12 +524,15 @@ class find_module
 			'CLASS_NIC'		=> $report_nic,
 			'CLASS_EM'		=> $report_email,
 
-			'U_ACTION'	=> 	$this->u_action. '&amp;add=1&amp;full_check=true&ch_user=' . $row['user_id'],
+			'U_ACTION'	=> 	$this->u_action . '&amp;add=1&amp;full_check=true&ch_user=' . $row['user_id'],
 		));
 
 		if (empty($ip) || empty($banned_ip))
 		{
-			$sql = 'SELECT poster_ip FROM '. POSTS_TABLE .' WHERE poster_id = '. intval($uid) .' GROUP BY poster_ip';
+			$sql = 'SELECT poster_ip
+				FROM ' . POSTS_TABLE . '
+				WHERE poster_id = ' . intval($uid) . '
+				GROUP BY poster_ip';
 			$result = $db->sql_query($sql);
 			while ($ip_row = $db->sql_fetchrow($result))
 			{
@@ -540,6 +547,7 @@ class find_module
 	function done()
 	{
 		global $template, $user;
+
 		$this->tpl_name = 'is_spamer_full';
 
 		$template->assign_vars(array(
@@ -549,7 +557,7 @@ class find_module
 
 	function PostToHost($data)
 	{
-		$fp = fsockopen("www.stopforumspam.com",80);
+		$fp = fsockopen("www.stopforumspam.com", 80);
 		fputs($fp, "POST /add.php HTTP/1.1\n" );
 		fputs($fp, "Host: www.stopforumspam.com\n" );
 		fputs($fp, "Content-type: application/x-www-form-urlencoded\n" );
@@ -561,14 +569,17 @@ class find_module
 
 	function getmicrotime()
 	{
-		list($usec, $sec) = explode(" ", microtime());
+		list($usec, $sec) = explode(' ', microtime());
 		return ((float)$usec + (float)$sec);
 	}
 
 	function backup($uid)
 	{
 		global $db;
-		$sql = 'SELECT * FROM '. USERS_TABLE .' WHERE user_id = '.intval($uid).'';
+
+		$sql = 'SELECT *
+			FROM ' . USERS_TABLE . '
+			WHERE user_id = ' . intval($uid);
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
@@ -628,6 +639,7 @@ class base_extractor
 	function write_end($data, $uid)
 	{
 		global $phpbb_root_path;
+
 		$filename = 'backup_user_id_' . $uid . '.sql';
 		$file = $phpbb_root_path . 'store/' . $filename;
 		$fp = fopen($file, "wb");
@@ -645,7 +657,9 @@ class mysql_extractor extends base_extractor
 	function write_start($uid, $sql_layer)
 	{
 		global $db, $phpbb_root_path;
-		$sql = 'SELECT * FROM '. USERS_TABLE .' WHERE user_id = '.intval($uid).'';
+		$sql = 'SELECT *
+			FROM ' . USERS_TABLE . '
+			WHERE user_id = ' . intval($uid);
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
