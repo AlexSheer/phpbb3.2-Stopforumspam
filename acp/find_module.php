@@ -200,28 +200,25 @@ class find_module
 			{
 				$ip = $row['user_ip'];
 				$uname = $row['username'];
-
 				$ch_data = array(
 					$row['username'],
 					$row['user_ip'],
 					$row['user_email']
 				);
-				$i_data = $this->check_stopforumspam($ch_data);
-				if (!is_array($i_data))
+
+				$em = $nick = false;
+
+				$res = $this->check_stopforumspam($ch_data);
+				if (!is_array($res[0]))
 				{
 					//trigger_error($i_data, E_USER_WARNING);
-					$insp_data = array();
-					$em = $nick = false;
+					$res = array();
 					$fail_chhk = true;
 				}
-				else
-				{
-					$insp_data = $i_data[0];
-				}
 
-				if (sizeof($insp_data))
+				if (sizeof($res))
 				{
-					foreach ($insp_data as $key => $value)
+					foreach ($res[0] as $key => $value)
 					{
 						switch ($key)
 						{
@@ -237,7 +234,6 @@ class find_module
 						}
 					}
 				}
-
 				if (!isset($banned_ip))
 				{
 					$banned_ip = false;
@@ -270,7 +266,7 @@ class find_module
 
 					'USER_REG_DATE'	=> $user->format_date($row['user_regdate']),
 					'LAST_VISIT'	=> ($row['user_lastvisit']) ? $user->format_date($row['user_lastvisit']) : $user->lang['NEVER'],
-					'USER_NAME'		=> '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) . '">' . $uname .'</a>',
+					'USER_NAME'		=> '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) . '">' . $row['username'] .'</a>',
 					'USER_EMAIL'	=> $row['user_email'],
 					'USER_POSTS'	=> $row['user_posts'],
 					'USER_IP'		=> (!empty($row['user_ip'])) ? $row['user_ip'] : $user->lang['READ_COMMENT'],
@@ -323,67 +319,34 @@ class find_module
 
 		$xmlUrl = 'http://api.stopforumspam.org/api?';
 		$xmlUrl .= (!empty($chk_data[0])) ? 'username=' . $chk_data[0] . '&' : '';
-		if(!preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $chk_data[1]))
-		{
-			 $chk_data[1] = '';
-		}
 		$xmlUrl .= (!empty($chk_data[1])) ? 'ip=' . $chk_data[1] . '&' : '';
 		$xmlUrl .= (!empty($chk_data[2])) ? 'email=' . $chk_data[2] . '' : '';
+		$xmlUrl .= '&serial';
 
 		$xmlStr = (function_exists('file_get_contents')) ? @file_get_contents($xmlUrl) : $this->file_get_contents_curl($xmlUrl);
 
 		if ($xmlStr)
 		{
-			$xmlObj = simplexml_load_string($xmlStr);
-			$arrXml = $this->objectsIntoArray($xmlObj);
-
-			if(sizeof ($arrXml['type']) == 1)
+			$data = unserialize($xmlStr);
+			if (!$data['success'])
 			{
-				$insp = array($arrXml['type'] => $arrXml['appears'] );
+				return ('CONNECTION_ERROR');
 			}
 
-			else if ($arrXml['@attributes']['success'] == true)
-			{
-				for ($i=0; $i < sizeof ($arrXml['type']); $i++)
-				{
-					$insp[$arrXml['type'][$i]] = $arrXml['appears'][$i];
-					$freq[$arrXml['type'][$i]] = $arrXml['frequency'][$i];
-				}
-			}
-			return array($insp, $freq);
+			$result = array();
+			$result['username'] = ($data['username']['appears']) ? 'yes' : 'no';
+			$freq['username'] = $data['username']['frequency'];
+			$result['ip'] = ($data['ip']['appears']) ? 'yes' : 'no';
+			$freq['ip'] = $data['ip']['frequency'];
+			$result['email'] = ($data['email']['appears']) ? 'yes' : 'no';
+			$freq['email'] = $data['email']['frequency'];
+
+			return array($result, $freq);
 		}
 		else
 		{
 			return ('CONNECTION_ERROR');
 		}
-	}
-
-	function objectsIntoArray($arrObjData, $arrSkipIndices = array())
-	{
-		$arrData = array();
-
-		// if input is object, convert into array
-		if (is_object($arrObjData))
-		{
-			$arrObjData = get_object_vars($arrObjData);
-		}
-
-		if (is_array($arrObjData))
-		{
-			foreach ($arrObjData as $index => $value)
-			{
-				if (is_object($value) || is_array($value))
-				{
-					$value = $this->objectsIntoArray($value, $arrSkipIndices);
-				}
-				if (in_array($index, $arrSkipIndices))
-				{
-					continue;
-				}
-				$arrData[$index] = $value;
-			}
-		}
-		return $arrData;
 	}
 
 	function jump_to($option_id)
@@ -452,6 +415,10 @@ class find_module
 		$freq = $i_data[1];
 		$report_nic = $report_email = $report_ip = 'ip';
 		$nick = $banned_ip = $em = false;
+		if (!is_array($insp_data))
+		{
+			trigger_error($i_data);
+		}
 		if (sizeof($insp_data))
 		{
 			foreach ($insp_data as $key => $value)
