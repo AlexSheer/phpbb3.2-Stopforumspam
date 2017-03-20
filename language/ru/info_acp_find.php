@@ -92,5 +92,5 @@ $lang = array_merge($lang, array(
 	'USER_EMAIL'	=> 'Адрес e-mail',
 	'WARNING_MESSAGE'	=> '<h3>Будьте внимательны, действие необратимо!</h3><p>Однако после выполнения операции будет сделана резервная копия для таблицы <b>users</b> для каждого отдельно взятого пользователя. Копии записываются в папку <c>store</c></p>',
 	'CONNECTION_ERROR'	=> 'Не удалось получить данные с сервера <a href = "http://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
-	'CHK_FAIL_EXPLAIN'	=> 'Если строка в списка выделена этим цветом, значит не удалось получить с сервера <a href = "http://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
+	'CHK_FAIL_EXPLAIN'	=> 'Если строка в списка выделена этим цветом, значит не удалось получить данные с сервера <a href = "http://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
 ));
