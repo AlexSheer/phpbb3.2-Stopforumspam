@@ -2,14 +2,14 @@
     "name": "sheer/stopforumspam",
     "type": "phpbb-extension",
     "description": "Allow find spamers in you board using API stopforumspam.com",
-    "homepage": "http://phpbbguru.net",
-    "version": "0.0.1",
-    "time": "2015-02-15",
+    "homepage": "https://phpbbguru.net",
+    "version": "1.0.0",
+    "time": "2018-11-11",
     "license": "GPL-2.0",
     "authors": [
         {
             "name": "Sheer",
-            "homepage": "http://phpbbguru.net",
+            "homepage": "https://phpbbguru.net",
             "role": "Support team"
         }
     ],
@@ -19,7 +19,13 @@
     "extra": {
         "display-name": "Spamer Finder",
         "soft-require": {
-            "phpbb/phpbb": "3.1.*@dev"
+            "phpbb/phpbb": "3.2.*@dev"
+        },
+        "version-check": {
+            "host": "sheer.phpbbguru.net",
+            "ssl": true,
+            "directory": "/versions/stopforumspam",
+            "filename": "version.json"
         }
     }
 }
