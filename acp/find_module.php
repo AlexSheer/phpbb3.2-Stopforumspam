@@ -102,11 +102,11 @@ class find_module
 		{
 			if (confirm_box(true))
 			{
-				if(sizeof($users))
+				if (sizeof($users))
 				{
 					$sql = 'SELECT user_id, user_email, username, user_ip
 						FROM ' . USERS_TABLE . '
-						WHERE ' . $db->sql_in_set('user_id', $users) . $sql_where . ''. $order_by;
+							WHERE ' . $db->sql_in_set('user_id', $users) . $sql_where . ''. $order_by;
 					$result = $db->sql_query_limit($sql, $per_page, $start);
 					$i = 0;
 					while ($row = $db->sql_fetchrow($result))
@@ -182,18 +182,20 @@ class find_module
 
 			$time_start = $this->getmicrotime();
 			$sql = 'SELECT count(user_id) AS total
-				FROM '. USERS_TABLE .'
-				WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . ' AND user_regdate > ' . $period . ' '
-				. $sql_where;
+				FROM ' . USERS_TABLE . '
+					WHERE user_type != ' . USER_IGNORE . '
+						AND user_type != ' . USER_FOUNDER . '
+						AND user_regdate > ' . $period . ' '
+						. $sql_where;
 			$result = $db->sql_query($sql);
 			$total_users =  $db->sql_fetchfield('total');
 			$db->sql_freeresult($result);
 
 			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts, user_lastvisit
-					FROM '. USERS_TABLE .'
-					WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . '
-					AND user_regdate > ' . $period . '
-					' . $sql_where . ''. $order_by;
+					FROM ' . USERS_TABLE . '
+						WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . '
+							AND user_regdate > ' . $period . '
+							' . $sql_where . ''. $order_by;
 			$result = $db->sql_query_limit($sql, $per_page, $start);
 
 			while ($row = $db->sql_fetchrow($result))
@@ -211,7 +213,6 @@ class find_module
 				$res = $this->check_stopforumspam($ch_data);
 				if (!is_array($res[0]))
 				{
-					//trigger_error($i_data, E_USER_WARNING);
 					$res = array();
 					$fail_chhk = true;
 				}
@@ -240,19 +241,19 @@ class find_module
 				}
 				if ($em || $nick)
 				{
-					$class = 'icon buton em_spam';
+					$class = ' em_spam';
 					if ($em && $nick && $banned_ip)
 					{
-						$class = 'icon buton spam';
+						$class = ' spam';
 					}
 				}
 				else if (empty($ip) || $banned_ip)
 				{
-					$class = 'icon buton ip';
+					$class = ' ip';
 				}
 				if ($em && $nick)
 				{
-					$class = 'icon buton spam';
+					$class = ' spam';
 				}
 
 				$template->assign_block_vars('row', array(
@@ -261,7 +262,7 @@ class find_module
 					'CLASS'			=> (isset($class)) ? $class : '',
 					'SPAM_MAIL'		=> ($em) ? true : false,
 					'SPAM_NICK'		=> ($nick) ? true : false,
-					'IP_IMG'		=> ($banned_ip) ? 'icon buton find' : 'icon buton ip',
+					'IP_IMG'		=> ($banned_ip) ? ' fa-check' : ' fa-info',
 					'S_IP_FIND'		=> ($banned_ip || empty($ip)) ? true : false,
 
 					'USER_REG_DATE'	=> $user->format_date($row['user_regdate']),
@@ -318,7 +319,7 @@ class find_module
 		}
 
 		$xmlUrl = 'http://api.stopforumspam.org/api?';
-		$xmlUrl .= (!empty($chk_data[0])) ? 'username=' . $chk_data[0] . '&' : '';
+		$xmlUrl .= (!empty($chk_data[0])) ? 'username=' . urlencode(iconv('GBK', 'UTF-8', $chk_data[0])) . '&' : '';
 		$xmlUrl .= (!empty($chk_data[1])) ? 'ip=' . $chk_data[1] . '&' : '';
 		$xmlUrl .= (!empty($chk_data[2])) ? 'email=' . $chk_data[2] . '' : '';
 		$xmlUrl .= '&serial';
@@ -369,29 +370,26 @@ class find_module
 
 	function full_check($uid)
 	{
-		global $db, $template, $user, $phpbb_root_path, $phpEx;
+		global $db, $template, $user, $request, $phpbb_root_path, $phpEx;
 
-		$add = request_var('add', false);
+		$add = $request->variable('add', false);
 		$this->tpl_name = 'is_spamer_full';
-
-		if (file_exists('' . $phpbb_root_path. 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . ''))
-		{
-			$file = @fopen('' . $phpbb_root_path . 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . '', "r");
-			fseek($file, 2);
-			$apy_key = fgets($file,15);
-		}
-		if (!isset($apy_key))
-		{
-			$apy_key = request_var('apy_key', '', false);
-		}
 
 		$banned_ip = $em = $nick = false;
 		$report_img = $ip_img = $em_img = $img = '';
 		$report = $user->lang['RESUME'];
 
+		if (file_exists('' . $phpbb_root_path. 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . ''))
+		{
+			$file = @fopen('' . $phpbb_root_path . 'ext/sheer/stopforumspam/acp/apy_key.' . $phpEx . '', "r");
+			fseek($file, 2);
+			$apy_key = fgets($file, 15);
+		}
+		$apy_key = (isset($apy_key)) ? $request->variable('apy_key', $apy_key, false) : $request->variable('apy_key', '', false);
+
 		$sql = 'SELECT user_id, user_ip, user_email, username
 			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . intval($uid);
+				WHERE user_id = ' . intval($uid);
 
 		$result = $db->sql_query_limit($sql, 1);
 		$row = $db->sql_fetchrow($result);
@@ -400,8 +398,16 @@ class find_module
 		$ip = $row['user_ip'];
 		if ($add)
 		{
-			$this->PostToHost('username=' . $row['username'] . '&ip_addr=' . $row['user_ip'] . '&email=' . $row['user_email'] . '&api_key=' . $apy_key . '');
-			redirect ($this->u_action. '&amp;f=d');
+			if ($this->PostToHost('username=' . $row['username'] . '&ip_addr=' . $row['user_ip'] . '&email=' . $row['user_email'] . '&api_key=' . $apy_key . ''))
+			{
+				redirect ($this->u_action. '&amp;f=d');
+			}
+			else
+			{
+				$template->assign_vars(array(
+					'S_ERROR'	=> true,
+				));
+			}
 		}
 
 		$ch_data = array(
@@ -450,25 +456,25 @@ class find_module
 			}
 		}
 
-		if(!$nick && !$em && !$banned_ip && !empty($ip))
+		if (!$nick && !$em && !$banned_ip && !empty($ip))
 		{
 			$report = $user->lang['NOT_SPAMMER'];
 			$report_img = '';
 		}
-		else if($nick && $banned_ip && $em)
+		else if ($nick && $banned_ip && $em)
 		{
 			$report = $user->lang['SPAMMER'];
-			$report_img = 'spam';
+			$report_img = ' spam';
 		}
-		else if($nick && $em && empty($p))
+		else if ($nick && $em && empty($p))
 		{
 			$report = $user->lang['CHECK_IP'];
-			$report_img = 'em_spam';
+			$report_img = ' em_spam';
 		}
 		else
 		{
 			$report = $user->lang['POSSIBLE_NOT'];
-			$report_img = 'ip';
+			$report_img = ' ip';
 		}
 
 		$template->assign_vars(array(
@@ -498,8 +504,8 @@ class find_module
 		{
 			$sql = 'SELECT poster_ip
 				FROM ' . POSTS_TABLE . '
-				WHERE poster_id = ' . intval($uid) . '
-				GROUP BY poster_ip';
+					WHERE poster_id = ' . intval($uid) . '
+					GROUP BY poster_ip';
 			$result = $db->sql_query($sql);
 			while ($ip_row = $db->sql_fetchrow($result))
 			{
@@ -507,8 +513,8 @@ class find_module
 					'IP'	=> '<a href = "http://www.stopforumspam.com/ipcheck/' . $ip_row['poster_ip'] . '" target="_blank">' . $ip_row['poster_ip'] . '</a> <-- Click me',
 				));
 			}
+			$db->sql_freeresult($result);
 		}
-		$db->sql_freeresult($result);
 	}
 
 	function done()
@@ -524,14 +530,28 @@ class find_module
 
 	function PostToHost($data)
 	{
-		$fp = fsockopen("www.stopforumspam.com", 80);
-		fputs($fp, "POST /add.php HTTP/1.1\n" );
-		fputs($fp, "Host: www.stopforumspam.com\n" );
-		fputs($fp, "Content-type: application/x-www-form-urlencoded\n" );
-		fputs($fp, "Content-length: ".strlen($data)."\n" );
-		fputs($fp, "Connection: close\n\n" );
-		fputs($fp, $data);
-		fclose($fp);
+		$fp = fsockopen("www.stopforumspam.com",80);
+		if ($fp)
+		{
+			fputs($fp, "POST /add.php HTTP/1.1\n" );
+			fputs($fp, "Host: www.stopforumspam.com\n" );
+			fputs($fp, "Content-type: application/x-www-form-urlencoded\n" );
+			fputs($fp, "Content-length: ".strlen($data)."\n" );
+			fputs($fp, "Connection: close\n\n" );
+			fputs($fp, $data);
+			// read the result
+			$h = '';
+			while (!feof($fp))
+			{
+				$h .= fgets($fp);
+			}
+			fclose($fp);
+			if (stristr($h, '503') === false)
+			{
+				return(true);
+			}
+		}
+		return(false);
 	}
 
 	function getmicrotime()
@@ -546,7 +566,7 @@ class find_module
 
 		$sql = 'SELECT *
 			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . intval($uid);
+				WHERE user_id = ' . intval($uid);
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
@@ -624,9 +644,10 @@ class mysql_extractor extends base_extractor
 	function write_start($uid, $sql_layer)
 	{
 		global $db, $phpbb_root_path;
+
 		$sql = 'SELECT *
 			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . intval($uid);
+				WHERE user_id = ' . intval($uid);
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
