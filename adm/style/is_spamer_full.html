@@ -1,39 +1,53 @@
 <!-- INCLUDE simple_header.html -->
+<link href="{T_FONT_AWESOME_LINK}" rel="stylesheet">
+<link href="style/admin.css?assets_version={T_ASSETS_VERSION}" rel="stylesheet" type="text/css" media="screen" />
 <style>
-.buton
-{
-	background: url("./../styles/prosilver/theme/images/icons_button.png");
-}
-
 .icon
 {
 	box-shadow: 0px 0px 0px 1px #FFF inset;
 	white-space: nowrap;
 	border-radius: 4px;
-	height: 9px;
-	width: 9px;
 	padding: 5px;
 	display: inline-block;
 	border: 1px solid #C7C3BF;
 	background-color: #FFFFFF;
+	font-family: FontAwesome;
+	font-style: normal;
 }
 
 .stop
 {
 	list-style: outside none none;
 	margin: 0px 0px 0px -3px;
+	line-height: 0.9em;
 }
-
-.spam		{ background-position: -149px -17px; }
-.em_spam	{ background-position: -161px -17px; }
-.find		{ background-position: -149px 4px; }
-.ip			{ background-position: -172px 4px; }
+.em_spam::before {
+	content: "\f12a";
+}
+.spam::before {
+	content: "\f071";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
+.ip::before {
+	content: "\f129";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
 </style>
-<script>var howLong = 4000;t = null;function closeMe(){t = setTimeout("self.close()",howLong);}</script>
+<script>
+	var howLong = 4000;
+	t = null;
+	function closeMe(){
+		t = setTimeout("self.close()",howLong);
+	}
+</script>
 <div style="width: 94%; background: #FFF; padding: 10px; margin: 10px 0px 0px 10px; float: left;">
 	<!-- IF DONE -->
 	{L_DONE}
 	<body onload="closeMe();self.focus()">
+	<!-- ELSE IF S_ERROR -->
+	<div class="errorbox" style="padding-top:8px"><p>{L_FAIL_ADD_DATA}</p></div>
 	<!-- ELSE -->
 	<form method="post" action="{U_ACTION}">
 		<fieldset>
@@ -41,20 +55,20 @@
 
 			<table style="border:none">
 			<tr>
-				<td><ul class="stop"><li><span class="icon buton {CLASS_IP}"></span></li></ul></td>
+				<td><ul class="stop"><li><i class="icon {CLASS_IP} fa-fw" aria-hidden="true"></i></li></ul></td>
 				<td><!-- IF IP_EMPTY -->{L_READ_COMMENT}<!-- ELSE -->{IP}&nbsp;--&raquo;&nbsp;{IP_FIND}<!-- ENDIF --></td>
 			</tr>
 			<tr>
-				<td><ul class="stop"><li><span class="icon buton {CLASS_EM}"></span></li></ul></td>
+				<td><ul class="stop"><li><i class="icon {CLASS_EM} fa-fw" aria-hidden="true"></i></li></ul></td>
 				<td>{EMAIL}&nbsp;--&raquo;&nbsp;{FIND_MAIL}</td>
 			</tr>
 			<tr>
-				<td><ul class="stop"><li><span class="icon buton {CLASS_NIC}"></span></li></ul></td>
+				<td><ul class="stop"><li><i class="icon {CLASS_NIC} fa-fw" aria-hidden="true"></i></span></li></ul></td>
 				<td>{FIND_NICK}</td>
 			</tr>
 			<tr>
 				<td>
-					<ul class="stop"><li><span class="icon buton {CLASS}"></span></li></ul>
+					<ul class="stop"><li><i class="icon {CLASS} fa-fw" aria-hidden="true"></i></li></ul>
 				</td>
 				<td><strong>{REPORT}</strong></td>
 			</tr>
