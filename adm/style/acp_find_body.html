@@ -1,18 +1,13 @@
 <!-- INCLUDE overall_header.html -->
 
 <style>
-.buton
-{
-	background: url("./../styles/prosilver/theme/images/icons_button.png");
-}
-
 .icon
 {
 	box-shadow: 0px 0px 0px 1px #FFF inset;
 	white-space: nowrap;
 	border-radius: 4px;
-	height: 9px;
-	width: 9px;
+	font-size: 1.2em;
+	width: 16px;
 	padding: 5px;
 	display: inline-block;
 	border: 1px solid #C7C3BF;
@@ -23,12 +18,21 @@
 {
 	list-style: outside none none;
 	margin: 0px 0px 0px -3px;
+	line-height: 0.9em;
 }
-
-.spam		{ background-position: -149px -17px; }
-.em_spam	{ background-position: -161px -17px; }
-.find		{ background-position: -149px 4px; }
-.ip			{ background-position: -172px 4px; }
+.em_spam::before {
+	content: "\f12a";
+}
+.spam::before {
+	content: "\f071";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
+.ip::before {
+	content: "\f129";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
 </style>
 
 <a name="maincontent"></a>
@@ -73,10 +77,10 @@
 			<td>{row.LAST_VISIT}</td>
 			<td><!-- IF row.USER_POSTS --><a href="{row.U_POSTS}">{row.USER_POSTS}</a><!-- ELSE -->{row.USER_POSTS}<!-- ENDIF --></td>
 			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
-			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><span class="{row.IP_IMG}"><!-- ENDIF --></td>
-			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
-			<td style="text-align:center"><!-- IF row.SPAM_NICK --><ul class="stop"><li><span class="icon buton find"><!-- ENDIF --></td>
-			<td style="text-align:center"><!-- IF row.IS_FIND --><a class="{row.CLASS}" href="{row.U_FULL_CHECK}" onClick="popup(this.href, 650, 500, ''); return false;"><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><i class="icon {row.IP_IMG} fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_NICK --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IS_FIND --><a href="{row.U_FULL_CHECK}" onClick="popup(this.href, 650, 500, ''); return false;"><i class="icon {row.CLASS} fa-fw" aria-hidden="true"></i></a><!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.IS_FIND --><input name="id_list[]" type="checkbox" class="radio" value="{row.USER_ID}" /><!-- ENDIF --></td>
 		</tr>
 		<!-- END row -->
@@ -123,19 +127,19 @@
 	<fieldset style="margin: 0px;">
 		<legend>{L_LEGEND}</legend>
 		<dl>
-			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton ip"></span></li></ul></dt>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-info fa-fw" aria-hidden="true"></i></li></ul></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_EM_NOT_FIND}</dd>
 		</dl>
 		<dl>
-			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton em_spam"></span></li></ul></dt>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-exclamation fa-fw" aria-hidden="true"></i></li></ul></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_EM_IS_FIND}</dd>
 		</dl>
 		<dl>
-			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton find"></span></li></ul></dt>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-check fa-fw" aria-hidden="true"></i></li></ul></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_FIND}</dd>
 		</dl>
 		<dl>
-			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><span class="icon buton spam"></span></li></ul></dt>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px; color:#BC2A4D"><i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i></li></ul></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_IS_FIND}</dd>
 		</dl>
 		<dl>
