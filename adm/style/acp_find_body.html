@@ -12,6 +12,7 @@
 	display: inline-block;
 	border: 1px solid #C7C3BF;
 	background-color: #FFFFFF;
+	color: #BC2A4D;
 }
 
 .stop
@@ -22,6 +23,7 @@
 }
 .em_spam::before {
 	content: "\f12a";
+	font-size: 1.2em;
 }
 .spam::before {
 	content: "\f071";
@@ -31,6 +33,11 @@
 .ip::before {
 	content: "\f129";
 	color: #BC2A4D;
+	font-size: 1.2em;
+}
+.find::before {
+	content: "\f007";
+	color: #228822;
 	font-size: 1.2em;
 }
 </style>
@@ -80,7 +87,7 @@
 			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><i class="icon {row.IP_IMG} fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
 			<td style="text-align:center"><!-- IF row.SPAM_NICK --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
-			<td style="text-align:center"><!-- IF row.IS_FIND --><a href="{row.U_FULL_CHECK}" onClick="popup(this.href, 750, 500, ''); return false;"><i class="icon {row.CLASS} fa-fw" aria-hidden="true"></i></a><!-- ENDIF --></td>
+			<td style="text-align:center"><a href="{row.U_FULL_CHECK}" onClick="popup(this.href, 650, 500, ''); return false;"><i class="icon {row.CLASS} fa-fw" aria-hidden="true"></i></a></td>
 			<td style="text-align:center"><!-- IF row.IS_FIND --><input name="id_list[]" type="checkbox" class="radio" value="{row.USER_ID}" /><!-- ENDIF --></td>
 		</tr>
 		<!-- END row -->
@@ -127,6 +134,10 @@
 	<fieldset style="margin: 0px;">
 		<legend>{L_LEGEND}</legend>
 		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px; color:#228822"><i class="icon find fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_USER_CHK}</dd>
+		</dl>
+		<dl>
 			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-info fa-fw" aria-hidden="true"></i></li></ul></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_EM_NOT_FIND}</dd>
 		</dl>
@@ -143,10 +154,16 @@
 			<dd style="margin: 0px 0px 0px 5%;">{L_IS_FIND}</dd>
 		</dl>
 		<dl>
-			<dt style="width: 5%;"><div style="width: 18px;border: 1px solid;height: 18px; background-color: #FCDEC0;margin-left: 16px;border-radius: 4px;"></div></dt>
+			<dt style="width: 5%;"><div style="width: 24px; height: 18px; background-color: #FCDEC0;margin-left: 16px;border-radius: 4px; border: 1px solid #C7C3BF;"></div></dt>
 			<dd style="margin: 0px 0px 0px 5%;">{L_CHK_FAIL_EXPLAIN}</dd>
 		</dl>
 	</fieldset>
 	<!-- ENDIF -->
+	<fieldset>
+		<legend></legend>
+		<p>{L_ENTER_APY}: <input name="apy_key" type="text" value="{APY_KEY}" size="16" maxlength="16">&nbsp;
+		<input class="button2" name="save" type="submit" value="{L_SAVE}" />&nbsp;
+		<a href="https://www.stopforumspam.com/signup" target="_blank">{L_GET_APY_KEY}</a></p>
+	</fieldset>
 </form>
 <!-- INCLUDE overall_footer.html -->
