@@ -1,6 +1,5 @@
 <!-- INCLUDE simple_header.html -->
 <link href="{T_FONT_AWESOME_LINK}" rel="stylesheet">
-<link href="style/admin.css?assets_version={T_ASSETS_VERSION}" rel="stylesheet" type="text/css" media="screen" />
 <style>
 .icon
 {
@@ -13,6 +12,7 @@
 	background-color: #FFFFFF;
 	font-family: FontAwesome;
 	font-style: normal;
+	color: #BC2A4D;
 }
 
 .stop
@@ -23,18 +23,29 @@
 }
 .em_spam::before {
 	content: "\f12a";
+	color: #BC2A4D;
+		font-size: 1.2em;
 }
 .spam::before {
 	content: "\f071";
-	color: #BC2A4D;
 	font-size: 1.2em;
 }
 .ip::before {
 	content: "\f129";
-	color: #BC2A4D;
 	font-size: 1.2em;
 }
+.find::before {
+	content: "\f007";
+	color: #228822;
+	font-size: 1.2em;
+}
+.clear.ip::before {
+	content: "\f129";
+	font-size: 1.2em;
+	color: #038a03;
+}
 </style>
+
 <script>
 	var howLong = 4000;
 	t = null;
@@ -42,7 +53,7 @@
 		t = setTimeout("self.close()",howLong);
 	}
 </script>
-	<div style="background-color: #fff; padding: 10px; margin-top: 10px;" class="permissions">
+	<div style="width: 94%; background: #FFF; padding: 10px; margin: 10px 0px 0px 10px; float: left;">
 		<!-- IF DONE -->
 		{L_DONE}
 		<body onload="closeMe();self.focus()">
@@ -52,43 +63,55 @@
 		<form method="post" action="{U_ACTION}">
 			<fieldset>
 				<legend>{USER}</legend>
-
 				<table style="border:none">
-				<tr>
-					<td><ul class="stop"><li><i class="icon {CLASS_IP} fa-fw" aria-hidden="true"></i></li></ul></td>
-					<td><!-- IF IP_EMPTY -->{L_READ_COMMENT}<!-- ELSE -->{IP}&nbsp;--&raquo;&nbsp;{IP_FIND}<!-- ENDIF --></td>
-				</tr>
-				<tr>
-					<td><ul class="stop"><li><i class="icon {CLASS_EM} fa-fw" aria-hidden="true"></i></li></ul></td>
-					<td>{EMAIL}&nbsp;--&raquo;&nbsp;{FIND_MAIL}</td>
-				</tr>
-				<tr>
-					<td><ul class="stop"><li><i class="icon {CLASS_NIC} fa-fw" aria-hidden="true"></i></span></li></ul></td>
-					<td>{FIND_NICK}</td>
-				</tr>
-				<tr>
-					<td>
-						<ul class="stop"><li><i class="icon {CLASS} fa-fw" aria-hidden="true"></i></li></ul>
-					</td>
-					<td><strong>{REPORT}</strong></td>
-				</tr>
-				<!-- IF .ip_row -->
-				<tr>
-					<th colspan="2">{L_OTHER_IP}</th>
-				</tr>
-				<!-- BEGIN ip_row -->
-				<tr class="bg2"><td colspan="2">{ip_row.IP}</td></tr>
-				<!-- END ip_row -->
-				<!-- ENDIF -->
+					<tbody>
+						<tr>
+							<td><ul class="stop"><li><i class="icon {CLASS_IP} fa-fw" aria-hidden="true"></i></li></ul></td>
+							<td><!-- IF IP_EMPTY -->{L_READ_COMMENT}<!-- ELSE -->{IP}&nbsp;--&raquo;&nbsp;{IP_FIND}<!-- ENDIF --></td>
+						</tr>
+						<tr>
+							<td><ul class="stop"><li><i class="icon {CLASS_EM} fa-fw" aria-hidden="true"></i></li></ul></td>
+							<td>{EMAIL}&nbsp;--&raquo;&nbsp;{FIND_MAIL}</td>
+						</tr>
+						<tr>
+							<td><ul class="stop"><li><i class="icon {CLASS_NIC} fa-fw" aria-hidden="true"></i></li></ul></td>
+							<td>{FIND_NICK}</td>
+						</tr>
+						<tr>
+							<td>
+								<ul class="stop"><li><i class="icon {CLASS} fa-fw" aria-hidden="true"></i></li></ul>
+							</td>
+							<td><strong>{REPORT}</strong></td>
+						</tr>
+					<!-- IF IP_EMPTY -->
+					<tr class="bg2">
+						<th colspan="2">{L_OTHER_IP}</th>
+					</tr>
+					<!-- BEGIN rw -->
+					<tr class="bg2"><td colspan="2">{rw.IP}</td></tr>
+					<!-- END rw -->
+					<!-- ENDIF -->
+			</tbody>
 				</table>
-
 			</fieldset>
 			<fieldset>
 				<legend>{L_ADD_DATA}</legend>
-				<p>{L_ENTER_APY}: <input name="apy_key" type="text" value="{APY_KEY}" size="16" maxlength="16">&nbsp;<input type="submit" name="add" class="button2" value="{L_ADD}"></p>
-				<p><a href="http://www.stopforumspam.com/signup" target="_blank">{L_GET_APY_KEY}</a></p>
+				<p>
+					{L_ENTER_APY}: <input name="apy_key" type="text" value="{APY_KEY}" size="16" maxlength="16">&nbsp;
+					<input type="submit" name="submit" class="button1" value="{L_ADD}">
+					&nbsp;<input type="submit" name="delete" class="button1" value="{L_ADD_AND_DELETE}">
+				</p>
+				<p><a href="https://www.stopforumspam.com/signup" target="_blank">{L_GET_APY_KEY}</a></p>
 			</fieldset>
+			<p><a href="#" onclick="self.close(); return false;">{L_CLOSE_WINDOW}</a></p>
 		</form>
 	</div>
 	<!-- ENDIF -->
-<!-- INCLUDE simple_footer.html -->
+</div>
+
+<script type="text/javascript" src="{T_JQUERY_LINK}"></script>
+<!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.min.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
+<script type="text/javascript" src="{T_ASSETS_PATH}/javascript/core.js?assets_version={T_ASSETS_VERSION}"></script>
+
+</body>
+</html>
