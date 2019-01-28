@@ -1,0 +1,103 @@
+<!-- INCLUDE simple_header.html -->
+<style>
+.icon
+{
+	box-shadow: 0px 0px 0px 1px #FFF inset;
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px solid #C7C3BF;
+	background-color: #FFFFFF;
+	font-style: normal;
+	color: #BC2A4D;
+}
+
+.stop
+{
+	list-style: outside none none;
+	font-size: 1.1em;
+}
+.em_spam::before {
+	content: "\f12a";
+	color: #BC2A4D;
+}
+.spam::before {
+	content: "\f071";
+	font-size: 1.2em;
+}
+.ip::before {
+	content: "\f129";
+	font-size: 1.2em;
+}
+.find::before {
+	content: "\f007";
+	color: #228822;
+	font-size: 1.2em;
+}
+.st {
+	margin-bottom: 5px;
+	padding-right: 2px;
+}
+.clear.ip::before {
+	content: "\f129";
+	font-size: 1.2em;
+	color: #038a03;
+}
+</style>
+
+<script>
+	var howLong = 4000;
+	t = null;
+	function closeMe(){
+		t = setTimeout("self.close()",howLong);
+	}
+</script>
+<div>
+	<!-- IF DONE -->
+	{L_DONE}
+	<body onload="closeMe();self.focus()">
+	<!-- ELSE IF S_ERROR -->
+	<div class="errorbox" style="padding-top:8px"><p>{L_FAIL_ADD_DATA}</p></div>
+	<!-- ELSE -->
+	<form method="post" action="{U_ACTION}">
+		<h2 class="memberlist-title">{USER}</h2>
+		<div class="panel bg1">
+			<div class="inner">
+				<ul class="stop">
+					<li><i class="icon st {CLASS_IP} fa-fw" aria-hidden="true"></i>&nbsp;<!-- IF IP_EMPTY -->{L_READ_COMMENT}<!-- ELSE -->{IP}&nbsp;--&raquo;&nbsp;{IP_FIND}<!-- ENDIF --></li>
+					<li><i class="icon st {CLASS_EM} fa-fw" aria-hidden="true"></i>&nbsp;{EMAIL}&nbsp;--&raquo;&nbsp;{FIND_MAIL}</li>
+					<li><i class="icon st {CLASS_NIC} fa-fw" aria-hidden="true"></i>&nbsp;{FIND_NICK}</li>
+					<li><i class="icon st {CLASS} fa-fw" aria-hidden="true"></i>&nbsp;<strong>{REPORT}</strong></li>
+				</ul>
+			</div>
+		</div>
+		<!-- IF IP_EMPTY -->
+		<div class="panel bg1">
+			<div class="inner">
+				<h3>{L_OTHER_IP}</h3>
+				<dl>
+					<dt>
+					<!-- BEGIN rw -->
+						{rw.IP}<br />
+					<!-- END rw -->
+					</dt>
+				</dl>
+			</div>
+		</div>
+		<!-- ENDIF -->
+		<div class="panel bg1">
+			<div class="inner">
+				<h3>{L_ADD_DATA}</h3>
+				<p style="font-size: 1.1em;">
+					{L_ENTER_APY}: <input name="apy_key" type="text" value="{APY_KEY}" size="16" maxlength="16">&nbsp;
+					<input type="submit" name="submit" class="button2" value="{L_ADD}">
+					&nbsp;<input type="submit" name="delete" class="button2" value="{L_ADD_AND_DELETE}">
+				</p>
+				<p style="font-size: 1.1em;"><a href="https://www.stopforumspam.com/signup" target="_blank">{L_GET_APY_KEY}</a></p>
+			</div>
+		</div>
+		<p><a href="#" onclick="self.close(); return false;">{L_CLOSE_WINDOW}</a></p>
+	</form>
+</div>
+<!-- ENDIF -->
+
+<!-- INCLUDE simple_footer.html -->
