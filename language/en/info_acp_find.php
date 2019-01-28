@@ -36,11 +36,11 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_FIND_SPAMER'			=> 'Find Spammer',
-	'ACP_FIND_SPAMER_EXPLAIN'	=> 'Here you can search for spammers among your users, ban them (by name, IP address and e-mail) and delete them. This page uses the database resources at <a href="http://www.stopforumspam.com" target="_blank"> www.stopforumspam.com </a>. ',
+	'ACP_FIND_SPAMER_EXPLAIN'	=> 'Here you can search for spammers among your users, ban them (by name, IP address and e-mail) and delete them. This page uses the database resources at <a href="https://www.stopforumspam.com" target="_blank"> www.stopforumspam.com </a>. ',
 
 	'ADD'			=> 'Add',
-	'ADD_DATA'		=> 'Add data to the <a href = "http://www.stopforumspam.com" target = "_blank"> stopforumspam </a> database',
-	'CHECK_IP'		=> 'There isn\'t a record of this IP address available, but there is a record of the username and e-mail addresse.<br />Check the IP address from which a user leaves a message on the website <a href="http://www.stopforumspam.com "target ="_ blank "> www.stopforumspam.com </a> <br /> this is most likely a spammer! ',
+	'ADD_DATA'		=> 'Add data to the <a href = "https://www.stopforumspam.com" target = "_blank"> stopforumspam </a> database',
+	'CHECK_IP'		=> 'There isn\'t a record of this IP address available, but there is a record of the username and e-mail addresse.<br />Check the IP address from which a user leaves a message on the website <a href="https://www.stopforumspam.com "target ="_ blank "> www.stopforumspam.com </a> <br /> this is most likely a spammer! ',
 	'CHECK_EMAIL'	=> 'Check Email',
 	'CHECK_NICK'	=> 'Check Username',
 	'CONFIRM_DELETE'=> 'Are you sure you want to delete these users?',
@@ -49,7 +49,7 @@ $lang = array_merge($lang, array(
 	'EMAIL_FIND'	=> 'Record of e-mail address found <b>%s</b> times.',
 	'EMAIL_NOT_FIND'=> 'No record of the e-mail address was found.',
 	'EM_IS_FIND'	=> 'Found an e-mail address or username entry. <b>Maybe its a spammer</b>! Click on the icon and run a full scan.',
-	'EM_NOT_FIND'	=> 'Record of the IP address was discovered in the database at <a href=“http://www.stopforumspam.com” target=”_blank ">stopforumspam</a>, but no records for either the address e-mail or username were found. This is possibly not a spammer.   ',
+	'EM_NOT_FIND'	=> 'Record of the IP address was discovered in the database at <a href=“https://www.stopforumspam.com” target=”_blank ">stopforumspam</a>, but no records for either the address e-mail or username were found. This is possibly not a spammer.   ',
 	'ENTER_APY'		=> 'Enter the API code',
 	'F_EXPLAIN'		=> 'Use as a template <b>*</b>, for example <b>*mail.ru</b> or <b>*.169.*.*</b>',
 	'EXEC_TIME'		=> 'While searching on this page: %s seconds',
@@ -59,7 +59,7 @@ $lang = array_merge($lang, array(
 	'GET_APY_KEY'	=> 'Get API key',
 	'IP_FIND'		=> 'Record of the IP address found <b>%s</b> times.',
 	'IP_NOT_FIND'	=> 'No record of the IP address was found.',
-	'IS_FIND'		=> 'E-mail address and username found. <b> This is probably a spammer </b>!<br />Click on the icon if you want to send user data to the database at <a href="http://www.stopforumspam.com" target="_blank ">stopforumspam</a>.',
+	'IS_FIND'		=> 'E-mail address and username found. <b> This is probably a spammer </b>!<br />Click on the icon if you want to send user data to the database at <a href="https://www.stopforumspam.com" target="_blank ">stopforumspam</a>.',
 	'LIST_USERS'	=> 'Users: %s',
 	'NAME'			=> 'Name',
 	'NICK_FIND'		=> 'Record found for the username <b>%s</b> times.',
@@ -91,5 +91,5 @@ $lang = array_merge($lang, array(
 	'USER_NAME'		=> 'Username',
 	'USER_EMAIL'	=> 'Email Address',
 	'WARNING_MESSAGE'	=> '<h3>Be careful this action is irreversible!</h3><p>However, the operation will be backed up on a table <b>users</b> for each individual user. Copies are recorded in the folder <c>"store"</c></p>',
-	'CONNECTION_ERROR'	=> 'Failed to retrieve data from <a href = "http://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
+	'CONNECTION_ERROR'	=> 'Failed to retrieve data from <a href = "https://www.stopforumspam.com" target = "_blank">stopforumspam.com</a>',
 ));
