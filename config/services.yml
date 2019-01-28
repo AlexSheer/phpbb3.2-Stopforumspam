@@ -1,8 +1,28 @@
 services:
+
+    sheer.stopforumspam.controller.sfsfinder:
+        class: sheer\stopforumspam\controller\sfsfinder
+        arguments:
+            - '@template'
+            - '@request'
+            - '@controller.helper'
+            - '%core.root_path%'
+    sheer.stopforumspam.core.functions_sfs:
+        class: sheer\stopforumspam\core\functions_sfs
+        arguments:
+            - '@dbal.conn'
+            - '@user'
+            - '@template'
+            - '@request'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
     sheer.stopforumspam.listener:
         class: sheer\stopforumspam\event\listener
         arguments:
-            - @template
-            - %core.root_path%
+            - '@controller.helper'
+            - '@template'
+            - '@auth'
+            - '@dbal.conn'
         tags:
             - { name: event.listener }
