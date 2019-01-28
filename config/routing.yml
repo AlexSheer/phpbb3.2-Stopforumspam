@@ -1,0 +1,3 @@
+sheer_stopforumspam_sfsfinder:
+    path: /stopforumspam/sfsfinder
+    defaults: { _controller: sheer.stopforumspam.controller.sfsfinder:main }
