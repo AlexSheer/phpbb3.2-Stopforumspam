@@ -39,36 +39,43 @@ class sfsfinder
 	* @access public
 	*/
 	public function __construct(
-			\phpbb\template\template $template,
-			\phpbb\request\request_interface $request,
-			\phpbb\controller\helper $helper,
-			$root_path
+		\phpbb\template\template $template,
+		\phpbb\request\request_interface $request,
+		\phpbb\controller\helper $helper,
+		\phpbb\user $user,
+		\phpbb\auth\auth $auth,
+		$root_path
 	)
 	{
 		$this->template				= $template;
 		$this->request				= $request;
 		$this->helper				= $helper;
+		$this->user					= $user;
+		$this->auth					= $auth;
 		$this->root_path			= $root_path;
 	}
 
 	/**
-	 * Display the flags page
-	 *
 	 * @access public
 	 */
 	public function main()
 	{
 		global $phpbb_container;
+		if ($this->auth->acl_get('a_') || $this->auth->acl_get('m_'))
+		{
+			$sfs = $phpbb_container->get('sheer.stopforumspam.core.functions_sfs');
 
-		$sfs = $phpbb_container->get('sheer.stopforumspam.core.functions_sfs');
+			$id = $this->request->variable('u', 0);
 
-		$id = $this->request->variable('u', 0);
-
-		page_header();
-		$url = $this->helper->route('sheer_stopforumspam_sfsfinder', array('u' => $id));
-
-		$sfs->sfull_check($id, $url, 'memberlist');
-		page_footer();
-		return new Response($this->template->return_display('body'), 200);
+			page_header();
+			$url = $this->helper->route('sheer_stopforumspam_sfsfinder', array('u' => $id));
+			$sfs->sfull_check($id, $url, 'memberlist');
+			page_footer();
+			return new Response($this->template->return_display('body'), 200);
+		}
+		else
+		{
+			trigger_error($this->user->lang['NOT_AUTHORISED']);
+		}
 	}
 }
