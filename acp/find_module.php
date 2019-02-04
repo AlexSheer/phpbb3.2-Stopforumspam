@@ -1,311 +1,169 @@
-<?php
-/**
-*
-* @package phpBB Extension - Find Spamer
-* @copyright (c) 2015 Sheer
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+<!-- INCLUDE overall_header.html -->
 
-namespace sheer\stopforumspam\acp;
-
-class find_module
+<style>
+.icon
 {
-	var $u_action;
-
-	function main($id, $mode)
-	{
-		global $db, $user, $template, $cache, $request, $phpbb_container;
-		global $config, $phpbb_root_path, $phpEx;
-
-		include ($phpbb_root_path . 'includes/functions_user.' . $phpEx);
-		$sfs = $phpbb_container->get('sheer.stopforumspam.core.functions_sfs');
-
-		$default_key = 'a';
-
-		$id			= $request->variable('t', 0);
-		$start		= $request->variable('start', 0);
-		$delmarked	= $request->variable('delmarked', false);
-		$filter		= $request->variable('filter', '', true);
-		$filter_key	= $request->variable('f_opt', 1);
-		$no_post	= $request->variable('no_posts', '');
-		$sort_key	= $request->variable('sk', $default_key);
-		$sort_dir	= $request->variable('sd', 'a');
-		$full_check	= $request->variable('full_check', false);
-		$ip			= $request->variable('ip', '');
-		$ch_user	= $request->variable('ch_user', '');
-		$whois		= $request->variable('whois', false);
-		$action		= $request->variable('f', '');
-		$apy_key	= $request->variable('apy_key', $config['sfs_apikey']);
-		$save		= $request->variable('save', false);
-
-		$users = $request->variable('id_list', array(0));
-		$fail_chhk = false;
-
-		$filter_options = array(1 => 'ip', 2 => 'email');
-		$per_page = 6;
-
-		$this->tpl_name = 'acp_find_body';
-		$this->page_title = $user->lang('ACP_FIND_SPAMER');
-
-		if ($save)
-		{
-			$config->set('sfs_apikey', $apy_key);
-			meta_refresh(3, $this->u_action);
-			trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
-		}
-
-		if ($full_check == true)
-		{
-			$sfs->sfull_check($ch_user, $this->u_action, 'acp');
-		}
-
-		if ($whois == true)
-		{
-			$sfs->who($ip);
-		}
-
-		// Sorting and order
-		$order_by = '';
-		$sort_key_text = array('a' => $user->lang['SORT_JOINED'], 'b' => $user->lang['SORT_USERNAME'], 'c' => $user->lang['SORT_IP'], 'd' => $user->lang['SORT_POST'], 'e' => $user->lang['SORT_EMAIL'], 'l' => $user->lang['LAST_VISIT']);
-		$sort_key_sql = array('a' => 'user_regdate', 'b' => 'username_clean', 'c' => 'user_ip',  'd' => 'user_posts', 'e' => 'user_email', 'l' => 'user_lastvisit');
-		$sort_dir_text = array('a' => $user->lang['ASCENDING'], 'd' => $user->lang['DESCENDING']);
-
-		if (!isset($sort_key_sql[$sort_key]))
-		{
-			$sort_key = $default_key;
-		}
-
-		$s_sort_key = '';
-		foreach ($sort_key_text as $key => $value)
-		{
-			$selected = ($sort_key == $key) ? ' selected="selected"' : '';
-			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-
-		$s_sort_dir = '';
-		foreach ($sort_dir_text as $key => $value)
-		{
-			$selected = ($sort_dir == $key) ? ' selected="selected"' : '';
-			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-
-		$s_filter_key = '';
-		foreach ($filter_options as $key => $value)
-		{
-			$selected = ($filter_key == $key) ? ' selected="selected"' : '';
-			$s_filter_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-
-		$pagination	= $phpbb_container->get('pagination');
-		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '&amp;f_opt='. $filter_key .'';
-
-		$sql_where = ($filter) ? ' AND user_' . $filter_options[$filter_key] . ' ' . $db->sql_like_expression(str_replace('*', $db->get_any_char(), $filter)) . '' : '';
-		$sql_where .= ($no_post) ? ' AND user_posts = 0' : '';
-		$order_by = ' ORDER BY ' . $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC') . '';
-
-		if ($delmarked)
-		{
-			if (confirm_box(true))
-			{
-				if (sizeof($users))
-				{
-					$sql = 'SELECT user_id, user_email, username, user_ip
-						FROM ' . USERS_TABLE . '
-							WHERE ' . $db->sql_in_set('user_id', $users) . $sql_where . ''. $order_by;
-					$result = $db->sql_query_limit($sql, $per_page, $start);
-
-					$i = 0;
-					while ($row = $db->sql_fetchrow($result))
-					{
-						$sfs->backup($users[$i]);
-						user_ban('email', $row['user_email'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
-						user_ban('user', $row['username'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
-						if ($row['user_ip'])
-						{
-							user_ban('ip', $row['user_ip'], 0, 0, 0, $user->lang['SPAM'], $user->lang['SPAM']);
-						}
-						user_delete('remove', $users[$i]);
-						add_log('admin', 'LOG_USER_DELETED', $row['username']);
-						$i++;
-					}
-					$msg = $user->lang['SUCSESS_DELETE'];
-				}
-
-				meta_refresh(3, $pagination_url);
-				trigger_error($msg . '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $pagination_url . '">', '</a>'));
-			}
-			else
-			{
-				if (empty($users))
-				{
-					$msg = $user->lang['NONE_SELECTED'];
-					meta_refresh(3, $pagination_url);
-					trigger_error($msg . '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $pagination_url . '">', '</a>'), E_USER_WARNING);
-				}
-
-				confirm_box(false, $user->lang['CONFIRM_DELETE'], build_hidden_fields(array(
-					'id_list'		=> $users,
-					'delmarked'		=> $delmarked,
-					))
-				);
-			}
-		}
-		else
-		{
-			$current_time = time();
-			$day = 86400;
-			$week = $day * 7;
-			$mounth = $day * 30;
-			$year = $mounth * 12;
-
-			switch ($action)
-			{
-				case 0:
-					$option = $user->lang['PER_DAY'];
-					$period = $current_time - $day;
-				break;
-				case 1:
-					$option = $user->lang['PER_WEEK'];
-					$period = $current_time - $week;
-				break;
-				case 2:
-					$option = $user->lang['PER_MOUNTH'];
-					$period = $current_time - $mounth;
-				break;
-				case 3:
-					$option = $user->lang['PER_YEAR'];
-					$period = $current_time - $year;
-				break;
-				case 4:
-					$option = $user->lang['PER_ALL_TIME'];
-					$period = 0;
-				break;
-				default:
-					$option = $user->lang['PER_DAY'];
-					$period = $current_time - 86400;
-				break;
-			}
-
-			$time_start = $sfs->getmicrotime();
-			$sql = 'SELECT count(user_id) AS total
-				FROM ' . USERS_TABLE . '
-					WHERE user_type != ' . USER_IGNORE . '
-						AND user_type != ' . USER_FOUNDER . '
-						AND user_regdate > ' . $period . ' '
-						. $sql_where;
-			$result = $db->sql_query($sql);
-			$total_users =  $db->sql_fetchfield('total');
-			$db->sql_freeresult($result);
-
-			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts, user_lastvisit
-					FROM ' . USERS_TABLE . '
-						WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . '
-							AND user_regdate > ' . $period . '
-							' . $sql_where . ''. $order_by;
-			$result = $db->sql_query_limit($sql, $per_page, $start);
-
-			while ($row = $db->sql_fetchrow($result))
-			{
-				$ip = $row['user_ip'];
-				$uname = $row['username'];
-				$ch_data = array(
-					$row['username'],
-					$row['user_ip'],
-					$row['user_email']
-				);
-
-				$em = $nick = false;
-
-				$res = $sfs->check_stopforumspam($ch_data);
-				if (!is_array($res[0]))
-				{
-					$res = array();
-					$fail_chhk = true;
-				}
-
-				if (sizeof($res))
-				{
-					foreach ($res[0] as $key => $value)
-					{
-						switch ($key)
-						{
-							case 'username':
-								($value == 'yes') ? $nick = true : $nick = false;
-								break;
-							case 'ip':
-								($value == 'yes') ? $banned_ip = true : $banned_ip = false;
-								break;
-							case 'email':
-								($value == 'yes') ? $em = true : $em = false;
-								break;
-						}
-					}
-				}
-
-				$class = ' find';
-				if (!isset($banned_ip))
-				{
-					$banned_ip = false;
-				}
-				if ($em || $nick)
-				{
-					$class = ' em_spam';
-					if ($em && $nick && $banned_ip)
-					{
-						$class = ' spam';
-					}
-				}
-				else if (empty($ip) || $banned_ip)
-				{
-					$class = ' ip';
-				}
-				if ($em && $nick)
-				{
-					$class = ' spam';
-				}
-
-				$template->assign_block_vars('row', array(
-					'USER_ID'		=> $row['user_id'],
-					'IS_FIND'		=> ($banned_ip || $em || $nick || empty($ip))? true : false,
-					'CLASS'			=> $class,
-					'SPAM_MAIL'		=> ($em) ? true : false,
-					'SPAM_NICK'		=> ($nick) ? true : false,
-					'IP_IMG'		=> ($banned_ip) ? ' fa-check' : ' fa-info',
-					'S_IP_FIND'		=> ($banned_ip || empty($ip)) ? true : false,
-
-					'USER_REG_DATE'	=> $user->format_date($row['user_regdate']),
-					'LAST_VISIT'	=> ($row['user_lastvisit']) ? $user->format_date($row['user_lastvisit']) : $user->lang['NEVER'],
-					'USER_NAME'		=> '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . intval($row['user_id'])) . '">' . $row['username'] .'</a>',
-					'USER_EMAIL'	=> $row['user_email'],
-					'USER_POSTS'	=> $row['user_posts'],
-					'USER_IP'		=> (!empty($row['user_ip'])) ? $row['user_ip'] : $user->lang['READ_COMMENT'],
-					'U_POSTS'		=> append_sid("{$phpbb_root_path}search.$phpEx", 'author_id=' . $row['user_id'] . '&sr=posts'),
-					'S_USER_IP'		=> (!empty($row['user_ip'])) ? $this->u_action . '&amp;whois=true&amp;ip=' . $row['user_ip'] . '' : '',
-					'U_FULL_CHECK'	=> $this->u_action. '&amp;full_check=true&ch_user=' . $row['user_id'],
-					'S_FAIL_CHK'	=> $fail_chhk,
-				));
-			}
-			$db->sql_freeresult($result);
-
-			$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_users, $config['topics_per_page'], $start);
-			$time_end = $sfs->getmicrotime();
-			$time = $time_end - $time_start;
-
-			$template->assign_vars(array(
-				'S_MODE_SELECT'		=> $s_sort_key,
-				'S_ORDER_SELECT'	=> $s_sort_dir,
-				'FILTER'			=> $filter,
-				'FILTER_OPTIONS'	=> $s_filter_key,
-				'NOPOSTS'			=> ($no_post) ? true : false,
-				'FILTER_OPTIONS'	=> $s_filter_key,
-				'TOTAL_USERS'		=> ($total_users) ? $user->lang('LIST_USERS', (int) $total_users) : '',
-				'EXEC_TIME'			=> sprintf($user->lang['EXEC_TIME'], $time),
-				'S_ACTION'			=> $pagination_url,
-				'APY_KEY'			=> $apy_key,
-			));
-			$sfs->jump_to($action);
-		}
-	}
+	box-shadow: 0px 0px 0px 1px #FFF inset;
+	white-space: nowrap;
+	border-radius: 4px;
+	font-size: 1.2em;
+	width: 16px;
+	padding: 5px;
+	display: inline-block;
+	border: 1px solid #C7C3BF;
+	background-color: #FFFFFF;
+	color: #BC2A4D;
 }
 
+.stop
+{
+	list-style: outside none none;
+	margin: 0px 0px 0px -3px;
+	line-height: 0.9em;
+}
+.em_spam::before {
+	content: "\f12a";
+	font-size: 1.2em;
+}
+.spam::before {
+	content: "\f071";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
+.ip::before {
+	content: "\f129";
+	color: #BC2A4D;
+	font-size: 1.2em;
+}
+.find::before {
+	content: "\f007";
+	color: #228822;
+	font-size: 1.2em;
+}
+</style>
+
+<a name="maincontent"></a>
+
+<h1>{L_ACP_FIND_SPAMER}</h1>
+<p>{L_ACP_FIND_SPAMER_EXPLAIN}</p>
+
+<form name="acp" method="post" action="{S_ACTION}">
+	<!-- IF .row --><span style="font-size: 80%;">{EXEC_TIME}</span>
+	<!-- IF .pagination -->
+	<div class="pagination">
+		{TOTAL_USERS}
+		<!-- IF .pagination -->
+			<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+	<!-- ENDIF -->
+	<table class="table1 zebra-table fixed-width-table responsive">
+	<thead>
+		<tr>
+			<th width="18%">{L_USER_NAME}</th>
+			<th width="25%">{L_USER_EMAIL}</th>
+			<th width="18%">{L_JOINED}</th>
+			<th width="22%">{L_LAST_VISIT}</th>
+			<th width="11%">{L_POSTS}</th>
+			<th width="14%">IP</th>
+			<th width="3%">IP</th>
+			<th width="6%">e-mail</th>
+			<th width="5%">{L_NAME}</th>
+			<th width="8%">{L_RESUME}</th>
+			<th width="9%">{L_MARK}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- BEGIN row -->
+		<tr<!-- IF row.S_FAIL_CHK --> style="background-color: #FCDEC0;"<!-- ENDIF -->>
+			<td>{row.USER_NAME}</td>
+			<td>{row.USER_EMAIL}</td>
+			<td>{row.USER_REG_DATE}</td>
+			<td>{row.LAST_VISIT}</td>
+			<td><!-- IF row.USER_POSTS --><a href="{row.U_POSTS}">{row.USER_POSTS}</a><!-- ELSE -->{row.USER_POSTS}<!-- ENDIF --></td>
+			<td><!-- IF row.S_USER_IP --><a href="{row.S_USER_IP}" onclick="popup(this.href, 700, 500); return false;">{row.USER_IP}</a><!-- ELSE -->{row.USER_IP}<!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.IP_IMG and row.S_IP_FIND --><ul class="stop"><li><i class="icon {row.IP_IMG} fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_MAIL --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><!-- IF row.SPAM_NICK --><ul class="stop"><li><i class="icon fa-check fa-fw" aria-hidden="true"></i><!-- ENDIF --></td>
+			<td style="text-align:center"><a href="{row.U_FULL_CHECK}" onClick="popup(this.href, 650, 500, ''); return false;"><i class="icon {row.CLASS} fa-fw" aria-hidden="true"></i></a></td>
+			<td style="text-align:center"><!-- IF row.IS_FIND --><input name="id_list[]" type="checkbox" class="radio" value="{row.USER_ID}" /><!-- ENDIF --></td>
+		</tr>
+		<!-- END row -->
+	</tbody>
+	</table>
+
+	<!-- IF .pagination -->
+	<div class="pagination">
+		{TOTAL_USERS}
+		<!-- IF .pagination -->
+			<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+	<!-- ENDIF -->
+
+	<fieldset class="quick">
+		<div class="errorbox" style="padding-top:8px">{L_WARNING_MESSAGE}</div>
+		<input class="button2" name="delmarked" value="{L_DELETE_SELECTED}" type="submit"><br>
+		<p class="small"><a href="#" onClick="marklist('acp', '', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onClick="marklist('acp', '', false); return false;">{L_UNMARK_ALL}</a></p>
+	</fieldset>
+	<!-- ELSE -->
+	<p>{L_NOT_FIND}</p>
+	<!-- ENDIF -->
+	<fieldset style="margin: 0px;" class="display-options">
+		{L_SEARCH_OPTION}:&nbsp;<select name="f" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['acp'].submit() }">
+		<!-- BEGIN jumpbox_options -->
+		<option value="{jumpbox_options.OPTION_ID}"{jumpbox_options.SELECTED}>{jumpbox_options.OPTION}</option>
+		<!-- END jumpbox_options -->
+		</select>&nbsp;&nbsp;{L_FILTER}&nbsp;
+		<select name="f_opt">{FILTER_OPTIONS}</select>
+		&nbsp;<input name="filter" type="text" value="{FILTER}" size="20" maxlength="20">
+		&nbsp;{L_SELECT_SORT}:&nbsp;
+		<select name="sk">{S_MODE_SELECT}</select><br />
+		<div style="margin: 10px 10px 10px 10px; font-size: 0.95em;">
+			{L_ORDER}&nbsp;<select name="sd">{S_ORDER_SELECT}</select>
+			&nbsp;{L_NO_POSTS_ONLY}&nbsp;&nbsp;<input name="no_posts" type="checkbox" class="radio"<!-- IF NOPOSTS -->checked<!-- ENDIF -->/>
+			&nbsp;&nbsp;<input class="button2" name="search" type="submit" value="{L_SEARCH}" />
+			<p style="font-size: 1em; padding-top: 5px;">{L_F_EXPLAIN}</p>
+		</div>
+	</fieldset>
+	<!-- IF .row  -->
+	<fieldset style="margin: 0px;">
+		<legend>{L_LEGEND}</legend>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px; color:#228822"><i class="icon find fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_USER_CHK}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-info fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_EM_NOT_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-exclamation fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_EM_IS_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px;"><i class="icon fa-check fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><ul class="stop"><li style="margin-left: 18px; color:#BC2A4D"><i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i></li></ul></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_IS_FIND}</dd>
+		</dl>
+		<dl>
+			<dt style="width: 5%;"><div style="width: 24px; height: 18px; background-color: #FCDEC0;margin-left: 16px;border-radius: 4px; border: 1px solid #C7C3BF;"></div></dt>
+			<dd style="margin: 0px 0px 0px 5%;">{L_CHK_FAIL_EXPLAIN}</dd>
+		</dl>
+	</fieldset>
+	<!-- ENDIF -->
+	<fieldset>
+		<legend></legend>
+		<p>{L_ENTER_APY}: <input name="apy_key" type="text" value="{APY_KEY}" size="16" maxlength="16">&nbsp;
+		<input class="button2" name="save" type="submit" value="{L_SAVE}" />&nbsp;
+		<a href="https://www.stopforumspam.com/signup" target="_blank">{L_GET_APY_KEY}</a></p>
+	</fieldset>
+</form>
+<!-- INCLUDE overall_footer.html -->
