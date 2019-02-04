@@ -73,12 +73,12 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->auth->acl_get('a_') || $this->auth->acl_get('m_'))
 		{
+			$groups = array();
 			$s_chk_sfs_allowed = true;
 			$member = $event['member'];
 			$sql = 'SELECT group_id
 				FROM ' . USER_GROUP_TABLE . '
 					WHERE user_id = ' . $member['user_id'];
-
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
