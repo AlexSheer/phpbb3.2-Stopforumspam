@@ -6,6 +6,8 @@ services:
             - '@template'
             - '@request'
             - '@controller.helper'
+            - '@user'
+            - '@auth'
             - '%core.root_path%'
     sheer.stopforumspam.core.functions_sfs:
         class: sheer\stopforumspam\core\functions_sfs
