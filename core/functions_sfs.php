@@ -150,30 +150,31 @@ class functions_sfs
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 
+			$this->backup($uid);
+			user_ban('email', $row['user_email'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
+			user_ban('user', $row['username'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
+			if ($row['user_ip'])
+			{
+				user_ban('ip', $row['user_ip'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
+			}
+			user_delete('remove', $uid);
+			add_log('admin', 'LOG_USER_DELETED', $row['username']);
+
 			if ($this->PostToHost('username=' . $row['username'] . '&ip_addr=' . $row['user_ip'] . '&email=' . $row['user_email'] . '&api_key=' . $apy_key . ''))
 			{
-				$this->backup($uid);
-				user_ban('email', $row['user_email'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
-				user_ban('user', $row['username'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
-				if ($row['user_ip'])
-				{
-					user_ban('ip', $row['user_ip'], 0, 0, 0, $this->user->lang['SPAM'], $this->user->lang['SPAM']);
-				}
-				user_delete('remove', $uid);
-				add_log('admin', 'LOG_USER_DELETED', $row['username']);
+
 				$this->template->assign_vars(array(
 					'L_DONE'	=> '<strong>' . $this->user->lang['SUCSESS_DELETE'] . ' </strong><br />' . $this->user->lang['DONE'],
 				));
-
-				$this->done();
-				redirect ($u_action. '&amp;f=d');
 			}
 			else
 			{
 				$this->template->assign_vars(array(
-					'S_ERROR'	=> true,
+					'L_DONE'	=> '<strong>' . $this->user->lang['SUCSESS_DELETE'] . '<br /><span style="color: #a00;">' . $this->user->lang['FAIL_ADD_DATA'] . '</span></strong>',
 				));
 			}
+			$this->done();
+			redirect ($u_action. '&amp;f=d');
 		}
 
 		if (empty($ip))
