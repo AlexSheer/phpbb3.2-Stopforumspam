@@ -29,6 +29,9 @@ class sfsfinder
 	/** @var string phpBB root path */
 	protected $root_path;
 
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/**
 	* Constructor
 	*
