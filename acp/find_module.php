@@ -38,6 +38,7 @@ class find_module
 		$action		= $request->variable('f', '');
 		$apy_key	= $request->variable('apy_key', $config['sfs_apikey']);
 		$save		= $request->variable('save', false);
+		$s_inactive	= $request->variable('s_inactive', false);
 
 		$users = $request->variable('id_list', array(0));
 		$fail_chhk = false;
@@ -98,10 +99,11 @@ class find_module
 		}
 
 		$pagination	= $phpbb_container->get('pagination');
-		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '&amp;f_opt='. $filter_key .'';
+		$pagination_url = $this->u_action. '&amp;filter=' . $filter . '&amp;f=' . $action . '&amp;no_posts=' . $no_post . '&amp;s_inactive=' . $s_inactive. '&amp;sd=' . $sort_dir . '&amp;sk=' . $sort_key . '&amp;f_opt='. $filter_key . '';
 
 		$sql_where = ($filter) ? ' AND user_' . $filter_options[$filter_key] . ' ' . $db->sql_like_expression(str_replace('*', $db->get_any_char(), $filter)) . '' : '';
 		$sql_where .= ($no_post) ? ' AND user_posts = 0' : '';
+		$sql_where .= ($s_inactive) ? ' AND user_inactive_reason <> 0' : '';
 		$order_by = ' ORDER BY ' . $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC') . '';
 
 		if ($delmarked)
@@ -198,7 +200,7 @@ class find_module
 			$total_users =  $db->sql_fetchfield('total');
 			$db->sql_freeresult($result);
 
-			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts, user_lastvisit
+			$sql = 'SELECT user_id, username, user_ip, user_email, user_regdate, user_posts, user_lastvisit, user_inactive_reason
 					FROM ' . USERS_TABLE . '
 						WHERE user_type != ' . USER_IGNORE . ' AND user_type != ' . USER_FOUNDER . '
 							AND user_regdate > ' . $period . '
@@ -284,6 +286,7 @@ class find_module
 					'S_USER_IP'		=> (!empty($row['user_ip'])) ? $this->u_action . '&amp;whois=true&amp;ip=' . $row['user_ip'] . '' : '',
 					'U_FULL_CHECK'	=> $this->u_action. '&amp;full_check=true&ch_user=' . $row['user_id'],
 					'S_FAIL_CHK'	=> $fail_chhk,
+					'S_USER_INACTIVE'	=> $row['user_inactive_reason'],
 				));
 			}
 			$db->sql_freeresult($result);
@@ -298,6 +301,7 @@ class find_module
 				'FILTER'			=> $filter,
 				'FILTER_OPTIONS'	=> $s_filter_key,
 				'NOPOSTS'			=> ($no_post) ? true : false,
+				'UNACTIVE'			=> ($s_inactive) ? true : false,
 				'FILTER_OPTIONS'	=> $s_filter_key,
 				'TOTAL_USERS'		=> ($total_users) ? $user->lang('LIST_USERS', (int) $total_users) : '',
 				'EXEC_TIME'			=> sprintf($user->lang['EXEC_TIME'], $time),
