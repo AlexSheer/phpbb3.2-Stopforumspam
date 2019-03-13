@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Allow find spamers in you board using API stopforumspam.com",
     "homepage": "https://phpbbguru.net",
-    "version": "1.0.2",
-    "time": "2019-01-23",
+    "version": "1.0.3",
+    "time": "2019-03-12",
     "license": "GPL-2.0",
     "authors": [
         {
