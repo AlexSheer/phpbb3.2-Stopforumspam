@@ -78,7 +78,7 @@
 	<tbody>
 		<!-- BEGIN row -->
 		<tr<!-- IF row.S_FAIL_CHK --> style="background-color: #FCDEC0;"<!-- ENDIF -->>
-			<td>{row.USER_NAME}</td>
+			<td>{row.USER_NAME} <!-- IF row.S_USER_INACTIVE -->&nbsp;<em>({L_INACTIVE})</em><!-- ENDIF --></td>
 			<td>{row.USER_EMAIL}</td>
 			<td>{row.USER_REG_DATE}</td>
 			<td>{row.LAST_VISIT}</td>
@@ -126,6 +126,7 @@
 		<div style="margin: 10px 10px 10px 10px; font-size: 0.95em;">
 			{L_ORDER}&nbsp;<select name="sd">{S_ORDER_SELECT}</select>
 			&nbsp;{L_NO_POSTS_ONLY}&nbsp;&nbsp;<input name="no_posts" type="checkbox" class="radio"<!-- IF NOPOSTS -->checked<!-- ENDIF -->/>
+			&nbsp;{L_UNACTIVE}&nbsp;&nbsp;<input name="s_inactive" type="checkbox" class="radio"<!-- IF UNACTIVE -->checked<!-- ENDIF -->/>
 			&nbsp;&nbsp;<input class="button2" name="search" type="submit" value="{L_SEARCH}" />
 			<p style="font-size: 1em; padding-top: 5px;">{L_F_EXPLAIN}</p>
 		</div>
