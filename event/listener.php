@@ -28,6 +28,9 @@ class listener implements EventSubscriberInterface
 	/* @var \phpbb\db\driver\driver */
 	protected $db;
 
+	protected $phpbb_root_path;
+	protected $php_ext;
+
 /**
 * Assign functions defined in this class to event listeners in the core
 *
@@ -39,7 +42,8 @@ class listener implements EventSubscriberInterface
 	{
 		return array(
 			'core.user_setup'					=> 'load_language_on_setup',
-			'core.memberlist_view_profile'		=> 'chk_profile'
+			'core.memberlist_view_profile'		=> 'chk_profile',
+			'core.acp_users_overview_before'	=> 'users_overview',
 		);
 	}
 
@@ -50,13 +54,17 @@ class listener implements EventSubscriberInterface
 		\phpbb\controller\helper $helper,
 		\phpbb\template\template $template,
 		\phpbb\auth\auth $auth,
-		\phpbb\db\driver\driver_interface $db
+		\phpbb\db\driver\driver_interface $db,
+		$phpbb_root_path,
+		$php_ext
 	)
 	{
 		$this->helper				= $helper;
 		$this->template				= $template;
 		$this->auth					= $auth;
 		$this->db					= $db;
+		$this->phpbb_root_path		= $phpbb_root_path;
+		$this->php_ext				= $php_ext;
 	}
 
 	public function load_language_on_setup($event)
@@ -67,6 +75,14 @@ class listener implements EventSubscriberInterface
 			'lang_set' => 'stopforumspam',
 		);
 		$event['lang_set_ext'] = $lang_set_ext;
+	}
+
+	public function users_overview($event)
+	{
+		$user_id = $event['user_row']['user_id'];
+		$this->template->assign_vars(array(
+			'U_CHK_SFS'		=> append_sid("{$this->phpbb_root_path}adm/index.$this->php_ext?i=-sheer-stopforumspam-acp-find_module", "mode=find&amp;full_check=true&amp;ch_user=$user_id"),
+		));
 	}
 
 	public function chk_profile($event)
