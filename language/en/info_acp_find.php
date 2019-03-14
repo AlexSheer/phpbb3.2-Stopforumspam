@@ -74,5 +74,6 @@ $lang = array_merge($lang, array(
 	'SORT_POST'		=> 'Messages',
 	'USER_NAME'		=> 'Username',
 	'USER_EMAIL'	=> 'Email Address',
+	'UNACTIVE'		=> 'only among non-activated users',
 	'WARNING_MESSAGE'	=> '<h3>Be careful this action is irreversible!</h3><p>However, the operation will be backed up on a table <b>users</b> for each individual user. Copies are recorded in the folder <c>"store"</c></p>',
 ));
