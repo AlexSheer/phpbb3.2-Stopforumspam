@@ -257,6 +257,11 @@ class functions_sfs
 			$report = $this->user->lang['CHECK_IP'];
 			$report_img = ' em_spam';
 		}
+		else if ($em || $banned_ip)
+		{
+			$report = $this->user->lang['POSSIBLE_YES'];
+			$report_img = ' em_spam';
+		}
 		else
 		{
 			$report = $this->user->lang['POSSIBLE_NOT'];
