@@ -38,6 +38,7 @@ $lang = array_merge($lang, array(
 	'NOT_SPAMMER'	=> 'This is not a spammer!',
 	'OTHER_IP'		=> 'IP addresses from which the user has sent messages',
 	'POSSIBLE_NOT'	=> 'Maybe it\'s not a spammer',
+	'POSSIBLE_YES'	=> 'Most likely this is a spammer',
 	'READ_COMMENT'	=> 'No IP address found',
 	'RESUME'		=> 'Summary',
 	'SFS'			=> 'Is a spammer?',
