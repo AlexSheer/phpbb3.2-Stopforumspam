@@ -44,6 +44,7 @@ class listener implements EventSubscriberInterface
 			'core.user_setup'					=> 'load_language_on_setup',
 			'core.memberlist_view_profile'		=> 'chk_profile',
 			'core.acp_users_overview_before'	=> 'users_overview',
+			'core.permissions'					=> 'permissions',
 		);
 	}
 
@@ -87,7 +88,7 @@ class listener implements EventSubscriberInterface
 
 	public function chk_profile($event)
 	{
-		if ($this->auth->acl_get('a_') || $this->auth->acl_get('m_'))
+		if ($this->auth->acl_get('a_') || $this->auth->acl_get('m_chk_sfs'))
 		{
 			$groups = array();
 			$s_chk_sfs_allowed = true;
@@ -123,5 +124,12 @@ class listener implements EventSubscriberInterface
 				'S_CHK_SFS_ALLOWED'	=> $s_chk_sfs_allowed,
 			));
 		}
+	}
+
+	public function permissions($event)
+	{
+		$permissions = $event['permissions'];
+		$permissions['m_chk_sfs'] = array('lang' => 'ACL_M_CHK_SFS', 'cat' => 'misc');
+		$event['permissions'] = $permissions;
 	}
 }
