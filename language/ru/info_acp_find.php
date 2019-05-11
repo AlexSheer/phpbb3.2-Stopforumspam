@@ -35,6 +35,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'ACL_M_CHK_SFS'				=> 'Может проверять пользователей по базе SFS',
 	'ACP_FIND_SPAMER'			=> 'Поиск спамеров',
 	'ACP_FIND_SPAMER_EXPLAIN'	=> 'Здесь вы можете среди пользователей найти предположительных спамеров, заблокировать их (по имени, IP-адресу и адресу e-mail) и удалить. Поиск осуществляется по IP-адресу, имени пользователя и адресу e-mail. Для поиска используется база данных ресурса <a href="https://www.stopforumspam.com" target="_blank">www.stopforumspam.com</a>. ',
 
