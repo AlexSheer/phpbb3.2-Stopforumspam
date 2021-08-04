@@ -46,4 +46,5 @@ $lang = array_merge($lang, array(
 	'SPAM'			=> 'Spammer',
 	'SPAMMER'		=> 'This is a spammer!',
 	'SUCSESS_DELETE'=> 'User has been successfully deleted. Backups are done.',
+	'CHECK_IP'		=> 'There isn\'t a record of this IP address available, but there is a record of the username and e-mail addresse.<br />Check the IP address from which a user leaves a message on the website <a href="https://www.stopforumspam.com "target ="_ blank "> www.stopforumspam.com </a> <br /> this is most likely a spammer! ',
 ));
